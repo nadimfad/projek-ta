@@ -23,12 +23,13 @@
                         <td class="py-3">{{ $laporan->kegiatan }}</td>
 
                         <td>
-                            <span class="px-3 py-1 text-xs rounded-full
-                                @if($laporan->status == 'selesai') bg-green-100 text-green-600
-                                @elseif($laporan->status == 'diproses') bg-yellow-100 text-yellow-600
-                                @else bg-gray-100 text-gray-600 @endif">
-                                {{ $laporan->status }}
-                            </span>
+                        <span class="px-3 py-1 text-xs rounded-full font-semibold
+                            @if($laporan->status == 'diterima') bg-green-100 text-green-600
+                            @elseif($laporan->status == 'ditolak') bg-red-100 text-red-600
+                            @else bg-yellow-100 text-yellow-600
+                            @endif">
+                            {{ ucfirst($laporan->status) }}
+                        </span>
                         </td>
 
                         <td>{{ $laporan->created_at->format('d M Y') }}</td>

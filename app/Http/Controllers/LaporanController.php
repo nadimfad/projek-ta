@@ -34,10 +34,8 @@ class LaporanController extends Controller
             'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
         ]);
 
-        // default status
         $data['status'] = 'menunggu';
 
-        // upload file
         if ($request->hasFile('bukti')) {
             $data['bukti'] = $request->file('bukti')->store('bukti', 'public');
         }
@@ -47,47 +45,62 @@ class LaporanController extends Controller
         return redirect('/laporan')->with('success', 'Data berhasil ditambahkan');
     }
 
+    // ✅ DETAIL LAPORAN
+    public function show($id)
+    {
+        $laporan = Laporan::findOrFail($id);
+
+        return view('laporan.show', compact('laporan'));
+    }
+
     public function edit($id)
     {
         $laporan = Laporan::findOrFail($id);
         return view('laporan.edit', compact('laporan'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $laporan = Laporan::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $laporan = Laporan::findOrFail($id);
 
-        $data = $request->validate([
-            'nama_pelapor' => 'required',
-            'email' => 'required|email',
-            'kegiatan' => 'required',
-            'deskripsi' => 'required',
-            'status' => 'required',
-            'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
-        ]);
+    // ✅ Jika hanya update status (admin)
+   if ($request->has('status') && count($request->all()) <= 3) {
+    $laporan->update([
+        'status' => $request->status
+    ]);
 
-        // jika upload file baru
-        if ($request->hasFile('bukti')) {
+    return back()->with('success', 'Status berhasil diupdate');
+}
 
-            // hapus file lama
-            if ($laporan->bukti) {
-                Storage::disk('public')->delete($laporan->bukti);
-            }
+    // ✅ Jika update full data (user)
+    $data = $request->validate([
+        'nama_pelapor' => 'required',
+        'email' => 'required|email',
+        'kegiatan' => 'required',
+        'deskripsi' => 'required',
+        'status' => 'required',
+        'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
+    ]);
 
-            // upload file baru
-            $data['bukti'] = $request->file('bukti')->store('bukti', 'public');
+    // upload file baru
+    if ($request->hasFile('bukti')) {
+
+        if ($laporan->bukti) {
+            Storage::disk('public')->delete($laporan->bukti);
         }
 
-        $laporan->update($data);
-
-        return redirect('/laporan')->with('success', 'Data berhasil diupdate');
+        $data['bukti'] = $request->file('bukti')->store('bukti', 'public');
     }
+
+    $laporan->update($data);
+
+    return redirect('/laporan')->with('success', 'Data berhasil diupdate');
+}
 
     public function destroy($id)
     {
         $laporan = Laporan::findOrFail($id);
 
-        // hapus file dari storage
         if ($laporan->bukti) {
             Storage::disk('public')->delete($laporan->bukti);
         }
@@ -97,7 +110,6 @@ class LaporanController extends Controller
         return redirect('/laporan')->with('success', 'Data berhasil dihapus');
     }
 
-    // ✅ HISTORY LAPORAN USER
     public function history()
     {
         $laporans = Laporan::where('email', auth()->user()->email)

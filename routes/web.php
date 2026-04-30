@@ -26,10 +26,9 @@ Route::middleware(['auth'])->group(function () {
     // ================= DOSEN =================
     Route::middleware(['role:dosen'])->group(function () {
 
-        // CRUD laporan
-        Route::resource('laporan', LaporanController::class);
+        // ❗ update DIHAPUS dari sini
+        Route::resource('laporan', LaporanController::class)->except(['update']);
 
-        // ✅ HISTORY LAPORAN (TAMBAHAN)
         Route::get('/history', [LaporanController::class, 'history'])->name('laporan.history');
     });
 
@@ -37,6 +36,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/admin/laporan', [LaporanController::class, 'index']);
+
+        // ✅ update khusus admin
+        Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
     });
 
     // ================= PROFILE =================

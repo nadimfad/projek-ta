@@ -39,13 +39,31 @@
 
                         <!-- Status -->
                         <td>
-                            <span class="px-3 py-1 text-xs rounded-full
-                                @if($laporan->status == 'selesai') bg-green-100 text-green-600
-                                @elseif($laporan->status == 'diproses') bg-yellow-100 text-yellow-600
-                                @else bg-gray-100 text-gray-600 @endif">
-                                {{ $laporan->status }}
-                            </span>
-                        </td>
+    @if(auth()->user()->role == 'admin')
+        <form action="{{ route('laporan.update', $laporan->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <select name="status"
+                onchange="this.form.submit()"
+                class="text-xs rounded border-gray-300">
+
+                <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                <option value="diproses" {{ $laporan->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                <option value="selesai" {{ $laporan->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+            </select>
+
+        </form>
+    @else
+<span class="px-3 py-1 text-xs rounded-full font-semibold
+    @if($laporan->status == 'diterima') bg-green-100 text-green-600
+    @elseif($laporan->status == 'ditolak') bg-red-100 text-red-600
+    @else bg-yellow-100 text-yellow-600
+    @endif">
+    {{ ucfirst($laporan->status) }}
+</span>
+    @endif
+</td>
 
                         <!-- Tanggal -->
                         <td>{{ $laporan->created_at->format('d M Y') }}</td>
@@ -64,6 +82,11 @@
                         </td>
 
                         <!-- Aksi -->
+                        <a href="{{ route('laporan.show', $laporan->id) }}"
+                         class="text-green-500 hover:underline">
+                            Detail
+                        </a>
+                        
                         <td class="flex gap-2">
                             <a href="{{ route('laporan.edit', $laporan->id) }}"
                                class="text-blue-500 hover:underline">
