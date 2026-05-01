@@ -24,10 +24,16 @@
 
             <!-- Kegiatan -->
             <div class="mb-4">
-                <label class="block mb-1">Kegiatan</label>
-                <input type="text" name="kegiatan"
-                    class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
+    <label class="block mb-1">Kegiatan</label>
+    <select name="kegiatan" 
+            class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <option value="" disabled selected>Pilih jenis kegiatan</option>
+        <option value="Seminar Kerja Praktek">Seminar Kerja Praktek</option>
+        <option value="Seminar Proposal">Seminar Proposal</option>
+        <option value="Seminar Hasil/Sidang Tertutup">Seminar Hasil / Sidang Tertutup</option>
+        <option value="Seminar Akhir/Sidang Terbuka">Seminar Akhir / Sidang Terbuka</option>
+    </select>
+</div>
 
             <!-- Deskripsi -->
             <div class="mb-4">
