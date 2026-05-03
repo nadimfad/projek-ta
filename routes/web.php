@@ -34,11 +34,16 @@ Route::middleware(['auth'])->group(function () {
 
     // ================= ADMIN =================
     Route::middleware(['role:admin'])->group(function () {
+
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
         Route::get('/admin/laporan', [LaporanController::class, 'index']);
 
         // ✅ update khusus admin
         Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
+
+        // 🔥 API REALTIME (TARUH DI SINI)
+        Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
     });
 
     // ================= PROFILE =================
