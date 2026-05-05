@@ -28,7 +28,7 @@ class DashboardController extends Controller
         // =========================
         // 🆕 DATA TERBARU
         // =========================
-        $laporanTerbaru = (clone $query)->latest()->take(5)->get();
+        $laporanTerbaru = Laporan::latest()->take(15)->get();
 
         // =========================
         // 📈 BULANAN

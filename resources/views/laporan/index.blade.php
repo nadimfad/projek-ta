@@ -1,4 +1,5 @@
-<x-app-layout>
+@extends('layouts.user')
+@section('content')
 
     <x-slot name="header">
         <h2 class="text-xl font-semibold">Data Laporan</h2>
@@ -170,4 +171,4 @@
         });
     </script>
 
-</x-app-layout>
+@endsection

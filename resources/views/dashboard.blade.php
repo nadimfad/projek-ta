@@ -1,5 +1,7 @@
-<x-app-layout>
-    
+@extends('layouts.admin')
+@section('content')
+
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             Dashboard Admin
@@ -38,7 +40,7 @@
 
             </select>
 
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg">
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition">
                 Filter
             </button>
 
@@ -50,101 +52,150 @@
         </form>
 
         <!-- STATISTIK -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
 
-            <x-card>
-                <p class="text-gray-500 text-sm">Total Laporan</p>
-                <h1 id="totalLaporan" class="text-3xl font-bold mt-2">{{ $totalLaporan }}</h1>
-            </x-card>
-
-            <x-card>
-                <p class="text-yellow-500 text-sm">Menunggu</p>
-                <h1 id="menunggu" class="text-3xl font-bold mt-2">{{ $laporanMenunggu }}</h1>
-            </x-card>
-
-            <x-card>
-                <p class="text-green-500 text-sm">Diterima</p>
-                <h1 id="diterima" class="text-3xl font-bold mt-2">{{ $laporanDiterima }}</h1>
-            </x-card>
-
-            <x-card>
-                <p class="text-red-500 text-sm">Ditolak</p>
-                <h1 id="ditolak" class="text-3xl font-bold mt-2">{{ $laporanDitolak }}</h1>
-            </x-card>
-
-        </div>
-
-        <!-- TABEL -->
-        <x-card>
-            <h2 class="text-lg font-semibold mb-4">Laporan Terbaru</h2>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-gray-500 border-b">
-                        <tr>
-                            <th class="py-3">Nama</th>
-                            <th>Kegiatan</th>
-                            <th>Bukti</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="divide-y">
-                        @forelse ($laporanTerbaru as $laporan)
-                        <tr class="hover:bg-gray-50 transition">
-
-                            <td class="py-3">{{ $laporan->nama_pelapor }}</td>
-                            <td>{{ $laporan->kegiatan }}</td>
-
-                            <td>
-                                @if ($laporan->bukti)
-                                    <img src="{{ asset('storage/' . $laporan->bukti) }}"
-                                         onclick="openModal(this.src)"
-                                         class="w-16 h-16 object-cover rounded shadow hover:scale-105 transition cursor-pointer">
-                                @else
-                                    <span class="text-gray-400">-</span>
-                                @endif
-                            </td>
-
-                            <td>
-                                <form action="{{ route('laporan.update', $laporan->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-
-                                    <select name="status"
-                                        onchange="this.form.submit()"
-                                        class="text-xs rounded border-gray-300 px-2 py-1 mb-1">
-
-                                        <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-                                        <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Diterima</option>
-                                        <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-                                    </select>
-                                </form>
-
-                                <span class="px-3 py-1 text-xs rounded-full font-semibold
-                                    @if($laporan->status == 'diterima') bg-green-100 text-green-600
-                                    @elseif($laporan->status == 'ditolak') bg-red-100 text-red-600
-                                    @else bg-yellow-100 text-yellow-600
-                                    @endif">
-                                    {{ ucfirst($laporan->status) }}
-                                </span>
-                            </td>
-
-                            <td>{{ $laporan->created_at->format('d M Y') }}</td>
-
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-400">
-                                Tidak ada data
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    <!-- TOTAL -->
+    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-5 rounded-xl shadow">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-sm opacity-80">Total Laporan</p>
+                <h1 id="totalLaporan" class="text-3xl font-bold">{{ $totalLaporan }}</h1>
             </div>
-        </x-card>
+            <div class="text-3xl">📊</div>
+        </div>
+    </div>
+
+    <!-- MENUNGGU -->
+    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white p-5 rounded-xl shadow">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-sm opacity-80">Menunggu</p>
+                <h1 id="menunggu" class="text-3xl font-bold">{{ $laporanMenunggu }}</h1>
+            </div>
+            <div class="text-3xl">⏳</div>
+        </div>
+    </div>
+
+    <!-- DITERIMA -->
+    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-5 rounded-xl shadow">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-sm opacity-80">Diterima</p>
+                <h1 id="diterima" class="text-3xl font-bold">{{ $laporanDiterima }}</h1>
+            </div>
+            <div class="text-3xl">✅</div>
+        </div>
+    </div>
+
+    <!-- DITOLAK -->
+    <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-5 rounded-xl shadow">
+        <div class="flex justify-between items-center">
+            <div>
+                <p class="text-sm opacity-80">Ditolak</p>
+                <h1 id="ditolak" class="text-3xl font-bold">{{ $laporanDitolak }}</h1>
+            </div>
+            <div class="text-3xl">❌</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- TABEL -->
+<x-card>
+    <h2 class="text-lg font-semibold mb-4">Laporan Terbaru</h2>
+
+    <!-- WRAPPER SCROLL -->
+    <div class="max-h-[400px] overflow-y-auto border rounded-lg">
+
+        <table class="w-full text-sm text-center border-separate border-spacing-y-2">
+
+            <!-- HEADER -->
+            <thead class="text-gray-500 border-b bg-white sticky top-0 z-10">
+                <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition">
+                    <th class="py-3">Nama</th>
+                    <th>Kegiatan</th>
+                    <th>Deskripsi</th>
+                    <th>Bukti</th>
+                    <th>Status</th>
+                    <th>Tanggal</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y">
+                @forelse ($laporanTerbaru as $laporan)
+                <tr class="hover:bg-gray-50 transition">
+
+                    <!-- Nama -->
+                    <td class="py-3">{{ $laporan->nama_pelapor }}</td>
+
+                    <!-- Kegiatan -->
+                    <td>{{ $laporan->kegiatan }}</td>
+
+                    <!-- Deskripsi -->
+                    <td class="max-w-xs truncate px-3"
+                        title="{{ $laporan->deskripsi }}">
+                        {{ $laporan->deskripsi }}
+                    </td>
+
+                    <!-- Bukti -->
+                    <td class="flex justify-center py-2">
+                        @if ($laporan->bukti)
+                            <img src="{{ asset('storage/' . $laporan->bukti) }}"
+                                 onclick="openModal(this.src)"
+                                 class="w-16 h-16 object-cover rounded shadow hover:scale-105 transition cursor-pointer">
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
+                    </td>
+
+                    <!-- Status -->
+                    <td>
+                        <form action="{{ route('laporan.update', $laporan->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <select name="status"
+                                onchange="this.form.submit()"
+                                class="text-xs rounded border-gray-300 px-2 py-1 mb-1">
+
+                                <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>
+                                    Menunggu
+                                </option>
+                                <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>
+                                    Diterima
+                                </option>
+                                <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>
+                                    Ditolak
+                                </option>
+                            </select>
+                        </form>
+
+                        <span class="px-3 py-1 text-xs rounded-full font-semibold
+                            @if($laporan->status == 'diterima') bg-green-100 text-green-600
+                            @elseif($laporan->status == 'ditolak') bg-red-100 text-red-600
+                            @else bg-yellow-100 text-yellow-600
+                            @endif">
+                            {{ ucfirst($laporan->status) }}
+                        </span>
+                    </td>
+
+                    <!-- Tanggal -->
+                    <td>{{ $laporan->created_at->format('d M Y') }}</td>
+
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-400">
+                        Tidak ada data
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+
+        </table>
+
+    </div>
+</x-card>
 
         <!-- CHARTS -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -158,21 +209,26 @@
     </div>
 
             <!-- BAR CHART -->
-            <x-card>
-                <h2 class="text-lg font-semibold mb-4 text-center">Grafik Bulanan</h2>
-                <canvas id="chartBulanan"></canvas>
-            </x-card>
+          <x-card class="p-6 rounded-2xl shadow-md bg-white">
+    <h2 class="text-lg font-semibold mb-4 text-gray-700 text-center">
+        Grafik Bulanan
+    </h2>
+
+    <div class="h-[350px]">
+        <canvas id="chartBulanan"></canvas>
+    </div>
+</x-card>
 
             <!-- DONUT CHART -->
-            <x-card>
-                <h2 class="text-lg font-semibold mb-4 text-center">Grafik per Kegiatan</h2>
-                <div class="flex justify-center">
-                    <div class="w-full max-w-xs sm:max-w-sm">
-                        <canvas id="chartKegiatan"></canvas>
-                    </div>
-                </div>
-            </x-card>
+            <x-card class="p-6 rounded-2xl shadow-md bg-white">
+    <h2 class="text-lg font-semibold mb-4 text-gray-700 text-center">
+        Grafik per Kegiatan
+    </h2>
 
+    <div class="h-[350px]">
+        <canvas id="chartKegiatan"></canvas>
+    </div>
+</x-card>
         </div>
 
     </div>
@@ -184,7 +240,22 @@
 // 🔥 INIT CHART (GLOBAL)
 // =======================
 
-const chartBulanan = new Chart(document.getElementById('chartBulanan'), {
+const ctx = document.getElementById('chartBulanan').getContext('2d');
+
+// 🎨 Gradient colors
+const gradientGray = ctx.createLinearGradient(0, 0, 0, 400);
+gradientGray.addColorStop(0, '#d1d5db');
+gradientGray.addColorStop(1, '#6b7280');
+
+const gradientGreen = ctx.createLinearGradient(0, 0, 0, 400);
+gradientGreen.addColorStop(0, '#4ade80');
+gradientGreen.addColorStop(1, '#16a34a');
+
+const gradientRed = ctx.createLinearGradient(0, 0, 0, 400);
+gradientRed.addColorStop(0, '#f87171');
+gradientRed.addColorStop(1, '#dc2626');
+
+const chartBulanan = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
@@ -192,30 +263,90 @@ const chartBulanan = new Chart(document.getElementById('chartBulanan'), {
             {
                 label: 'Menunggu',
                 data: @json($dataMenunggu),
-                backgroundColor: '#9CA3AF'
+                backgroundColor: gradientGray,
+                borderRadius: 12,
+                barThickness: 18,
+                // hoverBackgroundColor: '#4b5563'
             },
             {
                 label: 'Diterima',
                 data: @json($dataDiterima),
-                backgroundColor: '#22C55E'
+                backgroundColor: gradientGreen,
+                borderRadius: 12,
+                barThickness: 18
             },
             {
                 label: 'Ditolak',
                 data: @json($dataDitolak),
-                backgroundColor: '#EF4444'
+                backgroundColor: gradientRed,
+                borderRadius: 12,
+                barThickness: 18
             }
         ]
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
+
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+
         animation: {
-            duration: 1000,
+            duration: 1200,
             easing: 'easeOutQuart'
+        },
+
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    color: '#374151',
+                    font: {
+                        size: 12,
+                        weight: '600'
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: '#111827',
+                titleColor: '#fff',
+                bodyColor: '#d1d5db',
+                borderColor: '#374151',
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 8
+            }
+        },
+
+        scales: {
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    color: '#6b7280'
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#6b7280',
+                    precision: 0
+                },
+                grid: {
+                    color: '#e5e7eb',
+                    drawBorder: false
+                }
+            }
         }
     }
 });
 
-const chartKegiatan = new Chart(document.getElementById('chartKegiatan'), {
+const ctx2 = document.getElementById('chartKegiatan').getContext('2d');
+
+const chartKegiatan = new Chart(ctx2, {
     type: 'doughnut',
     data: {
         labels: {!! json_encode($labelKegiatan) !!},
@@ -226,21 +357,43 @@ const chartKegiatan = new Chart(document.getElementById('chartKegiatan'), {
                 '#22C55E',
                 '#F59E0B',
                 '#EF4444'
-            ]
+            ],
+            borderWidth: 0,
+            hoverOffset: 12
         }]
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%', // 🔥 bikin donut modern
+
         animation: {
-            duration: 1000,
-            easing: 'easeOutQuart'
+            animateScale: true,
+            animateRotate: true,
+            duration: 1200
         },
+
         plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#374151',
+                    padding: 15,
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: '#111827',
+                titleColor: '#fff',
+                bodyColor: '#d1d5db',
+                padding: 10,
+                cornerRadius: 8
+            }
         }
     }
 });
-
 
 // =======================
 // 🔁 REALTIME UPDATE
@@ -326,7 +479,7 @@ function loadRealtimeData() {
             chartBulanan.data.datasets[1].data = data.dataDiterima ?? chartBulanan.data.datasets[1].data;
             chartBulanan.data.datasets[2].data = data.dataDitolak ?? chartBulanan.data.datasets[2].data;
 
-            chartBulanan.update();
+            chartBulanan.update('active');
 
 
             // ===================
@@ -375,4 +528,5 @@ document.addEventListener('keydown', function(e){
 });
 
 </script>
-</x-app-layout>
+
+@endsection
