@@ -17,7 +17,7 @@
    <aside class="w-64 bg-gradient-to-b from-indigo-900 to-indigo-800 text-white flex flex-col shadow-xl">
 
     <div class="p-6 text-xl font-bold tracking-wide">
-        🚀 GRAT Admin
+        🚀 SIGAP
     </div>
 
     <nav class="flex-1 px-3 space-y-2">
