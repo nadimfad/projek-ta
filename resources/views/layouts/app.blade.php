@@ -30,7 +30,7 @@
             <!-- Page Content -->
             <main class="py-8 bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{ $slot }}
+        @yield('content')
     </div>
 </main>
 </main>

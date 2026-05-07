@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 // redirect awal
 Route::get('/', function () {
-    return redirect('/login');
+    return view('/welcome');
 });
 
 // setelah login redirect role

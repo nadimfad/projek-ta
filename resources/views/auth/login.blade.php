@@ -1,82 +1,106 @@
-<x-guest-layout>
-    <div class="h-[100vh] w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 overflow-hidden">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sikawan</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-        <div class="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+<body class="bg-gradient-to-br from-indigo-50 via-white to-indigo-100 min-h-screen flex items-center justify-center">
 
-            <!-- Header -->
-            <div class="mb-6 text-center">
-                <h2 class="text-2xl font-semibold text-gray-800 dark:text-white">
-                    Masuk ke Sistem
-                </h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Silakan login untuk melanjutkan
-                </p>
+<!-- CONTAINER -->
+<div class="w-full max-w-md px-6">
+
+    <!-- BACK BUTTON -->
+    <a href="{{ url('/') }}" class="flex items-center gap-2 text-gray-500 mb-6 hover:text-indigo-600 transition">
+        ← Kembali ke Beranda
+    </a>
+
+    <!-- CARD -->
+    <div class="bg-white rounded-3xl shadow-xl p-8 relative overflow-hidden">
+
+        <!-- ICON -->
+        <div class="flex justify-center mb-6">
+            <div class="w-16 h-16 bg-indigo-600 text-white flex items-center justify-center rounded-2xl shadow-lg">
+                🔒
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <h2 class="text-2xl font-bold text-center mb-2">
+            Selamat Datang
+        </h2>
+
+        <p class="text-gray-500 text-center mb-6">
+            Masuk ke portal Sikawan untuk mengelola laporan Anda.
+        </p>
+
+        <!-- FORM -->
+        <form method="POST" action="{{ route('login') }}" class="space-y-5">
+            @csrf
+
+            <!-- EMAIL -->
+            <div>
+                <label class="text-sm text-gray-500">Email</label>
+
+                <div class="group mt-1 flex items-center border rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
+                    <span class="text-gray-400 mr-2 group-focus-within:text-indigo-600 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-mail">
+        <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
+        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+    </svg>
+</span>
+                    <input type="email" name="email" required
+                        class="w-full outline-none bg-transparent border-none focus:ring-0"
+                        placeholder="nama@instansi.go.id">
+                </div>
             </div>
 
-            <x-auth-session-status class="mb-4" :status="session('status')" />
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                <!-- Email -->
-                <div class="mb-4">
-                    <label class="block text-sm text-gray-600 dark:text-gray-300 mb-1">
-                        Email
-                    </label>
-                    <input 
-                        type="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required autofocus
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-gray-800 dark:focus:ring-white focus:outline-none transition"
-                        placeholder="nama@email.com"
-                    >
-                    <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500" />
-                </div>
-
-                <!-- Password -->
-                <div class="mb-4">
-                    <label class="block text-sm text-gray-600 dark:text-gray-300 mb-1">
-                        Password
-                    </label>
-                    <input 
-                        type="password"
-                        name="password"
-                        required
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-gray-800 dark:focus:ring-white focus:outline-none transition"
-                        placeholder="Masukkan password"
-                    >
-                    <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500" />
-                </div>
-
-                <!-- Options -->
-                <div class="flex items-center justify-between text-sm mb-6">
-                    <label class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                        <input type="checkbox" name="remember" class="rounded border-gray-300">
-                        Ingat saya
-                    </label>
-
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="text-gray-700 dark:text-gray-300 hover:underline">
-                            Lupa password?
-                        </a>
-                    @endif
-                </div>
-
-                <!-- Button -->
-                <button type="submit"
-                    class="w-full py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium">
-                    Masuk
-                </button>
-
-                <!-- Register -->
-                <p class="text-center mt-6 text-sm text-gray-500 dark:text-gray-400">
-                    Belum punya akun?
-                    <a href="{{ route('register') }}" class="text-gray-900 dark:text-white font-medium hover:underline">
-                        Daftar
+            <!-- PASSWORD -->
+            <div>
+                <div class="flex justify-between text-sm">
+                    <label class="text-gray-500">Password</label>
+                    <a href="#" class="text-indigo-600 hover:underline">
+                        Lupa Password?
                     </a>
-                </p>
-            </form>
-        </div>
+                </div>
+
+                <div class="group mt-1 flex items-center border rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
+                    <span class="text-gray-400 mr-2 group-focus-within:text-indigo-600 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        class="lucide lucide-eye">
+        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+</span>
+                    <input type="password" name="password" required
+                        class="w-full outline-none bg-transparent border-none focus:ring-0"
+                        placeholder="********">
+                </div>
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold 
+                       hover:bg-indigo-700 transition transform hover:scale-[1.02] shadow-lg">
+                Masuk ke Portal
+            </button>
+
+        </form>
+
+        <!-- FOOTER -->
+        <p class="text-center text-sm text-gray-400 mt-6">
+            © {{ date('Y') }} Sikawan System
+        </p>
+
     </div>
-</x-guest-layout>
+
+</div>
+
+</body>
+</html>
