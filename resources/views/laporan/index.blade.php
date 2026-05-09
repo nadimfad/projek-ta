@@ -1,245 +1,369 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Laporan - Sikawan</title>
 
-@section('content')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-<div class="container mx-auto px-4 py-6">
+    <style>
+        body{
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
 
-    <!-- HEADER + BUTTON -->
-    <div class="mb-4 flex flex-wrap justify-between items-center gap-3">
-        <h1 class="text-2xl font-bold text-gray-800">Laporan Terbaru</h1>
+<body class="bg-[#f5f7fb]">
 
-        <a href="{{ route('laporan.create') }}"
-           class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-            + Tambah Laporan
-        </a>
-    </div>
+<div class="flex min-h-screen">
 
-    <!-- FILTER -->
-    <form method="GET"
-          action="{{ route('laporan.index') }}"
-          class="mb-6 flex flex-wrap gap-3">
+    <!-- SIDEBAR -->
+    <aside class="w-[260px] bg-white border-r border-gray-100 flex flex-col justify-between sticky top-0 h-screen">
 
-        <select name="kegiatan"
-                class="border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <div>
 
-            <option value="">Semua Kegiatan</option>
+            <!-- LOGO -->
+            <div class="flex items-center gap-3 px-6 py-8">
 
-            <option value="Seminar Kerja Praktek"
-                {{ request('kegiatan') == 'Seminar Kerja Praktek' ? 'selected' : '' }}>
-                Seminar Kerja Praktek
-            </option>
+                <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
 
-            <option value="Seminar Proposal"
-                {{ request('kegiatan') == 'Seminar Proposal' ? 'selected' : '' }}>
-                Seminar Proposal
-            </option>
+                    <!-- ICON -->
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-7 h-7 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
 
-            <option value="Seminar Hasil/Sidang Tertutup"
-                {{ request('kegiatan') == 'Seminar Hasil/Sidang Tertutup' ? 'selected' : '' }}>
-                Seminar Hasil / Sidang Tertutup
-            </option>
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 3l7 4v5c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V7l7-4z"/>
+                    </svg>
 
-            <option value="Seminar Akhir/Sidang Terbuka"
-                {{ request('kegiatan') == 'Seminar Akhir/Sidang Terbuka' ? 'selected' : '' }}>
-                Seminar Akhir / Sidang Terbuka
-            </option>
+                </div>
 
-        </select>
+                <div>
+                    <h1 class="text-x1 font-bold text-slate-800 tracking-tight">
+                        SIKAWAN
+                    </h1>
+                </div>
 
-        <button type="submit"
-            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-            Filter
-        </button>
+            </div>
 
-        <a href="{{ route('laporan.index') }}"
-           class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition">
-            Reset
-        </a>
+            <!-- MENU -->
+            <div class="px-4 mt-5 space-y-3">
 
-    </form>
+                <a href="{{ route('laporan.index') }}"
+                   class="flex items-center gap-4 bg-blue-50 text-blue-600 px-5 py-4 rounded-2xl font-semibold">
 
-    <!-- CARD -->
-    <div class="bg-white shadow-md rounded-xl overflow-hidden">
+                    <!-- ICON -->
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
 
-        <div class="overflow-x-auto">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2
+                            2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                    </svg>
 
-            <table class="w-full text-sm text-left">
+                    Laporan Saya
+                </a>
 
-                <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
-                    <tr>
-                        <th class="px-6 py-4 text-center">Nama</th>
-                        <th class="px-6 py-4 text-center">Kegiatan</th>
-                        <th class="px-6 py-4 text-center">Status</th>
-                        <th class="px-6 py-4 text-center">Tanggal</th>
-                        <th class="px-6 py-4 text-center">Bukti</th>
-                    </tr>
-                </thead>
+                <a href="#"
+                   class="flex items-center gap-4 text-slate-600 hover:bg-gray-100 px-5 py-4 rounded-2xl font-medium transition">
 
-                <tbody class="divide-y divide-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
 
-                    @forelse ($laporans as $laporan)
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0
+                            4.847.655 6.879 1.804M15 11a3 3 0 11-6
+                            0 3 3 0 016 0z"/>
+                    </svg>
 
-                    <tr class="hover:bg-gray-50 transition">
+                    Profil
+                </a>
 
-                        <!-- Nama -->
-                        <td class="px-6 py-4 text-center">
-                            {{ $laporan->nama_pelapor }}
-                        </td>
-
-                        <!-- Kegiatan -->
-                        <td class="px-6 py-4 text-center">
-                            {{ $laporan->kegiatan }}
-                        </td>
-
-                        <!-- Status -->
-                        <td class="px-6 py-4 text-center">
-
-                            @if(auth()->user()->role == 'admin')
-
-                                <form action="{{ route('laporan.update', $laporan->id) }}"
-                                      method="POST">
-
-                                    @csrf
-                                    @method('PUT')
-
-                                    <select name="status"
-                                            onchange="this.form.submit()"
-                                            class="text-xs rounded border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-
-                                        <option value="menunggu"
-                                            {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>
-                                            Menunggu
-                                        </option>
-
-                                        <option value="diproses"
-                                            {{ $laporan->status == 'diproses' ? 'selected' : '' }}>
-                                            Diproses
-                                        </option>
-
-                                        <option value="selesai"
-                                            {{ $laporan->status == 'selesai' ? 'selected' : '' }}>
-                                            Selesai
-                                        </option>
-
-                                    </select>
-
-                                </form>
-
-                            @else
-
-                                <span class="px-3 py-1 text-xs rounded-full font-semibold
-
-                                    @if($laporan->status == 'selesai')
-                                        bg-green-100 text-green-700
-                                    @elseif($laporan->status == 'diproses')
-                                        bg-yellow-100 text-yellow-700
-                                    @else
-                                        bg-gray-100 text-gray-700
-                                    @endif
-                                ">
-
-                                    {{ ucfirst($laporan->status) }}
-
-                                </span>
-
-                            @endif
-
-                        </td>
-
-                        <!-- Tanggal -->
-                        <td class="px-6 py-4 text-center">
-                            {{ $laporan->created_at->format('d M Y') }}
-                        </td>
-
-                        <!-- Bukti -->
-                        <td class="px-6 py-4 text-center">
-
-                            @if ($laporan->bukti)
-
-                                <img src="{{ asset('storage/' . $laporan->bukti) }}"
-                                     onclick="openModal(this.src)"
-                                     class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:scale-110 transition mx-auto shadow">
-
-                            @else
-
-                                <span class="text-gray-400">-</span>
-
-                            @endif
-
-                        </td>
-
-                    </tr>
-
-                    @empty
-
-                    <tr>
-                        <td colspan="5"
-                            class="text-center py-6 text-gray-500">
-                            Belum ada data laporan
-                        </td>
-                    </tr>
-
-                    @endforelse
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
+        <!-- LOGOUT -->
+        <div class="p-6">
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+
+                <button type="submit"
+                    class="flex items-center gap-3 text-red-500 font-semibold hover:opacity-80 transition">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-6 h-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4
+                            4H7m6 4v1m0-10V4"/>
+                    </svg>
+
+                    Keluar
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-8">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-8">
+
+            <div>
+
+                <h1 class="text-4xl font-bold text-slate-800">
+                    Halo, {{ auth()->user()->name }}!
+                </h1>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Pantau status laporan gratifikasi Anda di sini.
+                </p>
+
+            </div>
+
+            <!-- BUTTON -->
+            <a href="{{ route('laporan.create') }}"
+               class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-blue-100 transition hover:-translate-y-0.5 flex items-center gap-2">
+
+                + Tambah Laporan
+            </a>
+
+        </div>
+
+     <!-- CARD STATISTIK -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+
+    <!-- TOTAL -->
+    <div class="bg-white rounded-[24px] p-5 shadow-sm border border-gray-100/50">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-slate-800 leading-none">
+                    {{ $laporans->count() }}
+                </h3>
+                <p class="text-slate-400 mt-1 text-xs uppercase tracking-wider font-bold">
+                    Total Laporan
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIPROSES -->
+    <div class="bg-white rounded-[24px] p-5 shadow-sm border border-gray-100/50">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-slate-800 leading-none">
+                    {{ $laporans->where('status','diproses')->count() }}
+                </h3>
+                <p class="text-slate-400 mt-1 text-xs uppercase tracking-wider font-bold">
+                    Sedang Diproses
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SELESAI -->
+    <div class="bg-white rounded-[24px] p-5 shadow-sm border border-gray-100/50">
+        <div class="flex items-center gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-slate-800 leading-none">
+                    {{ $laporans->where('status','selesai')->count() }}
+                </h3>
+                <p class="text-slate-400 mt-1 text-xs uppercase tracking-wider font-bold">
+                    Selesai
+                </p>
+            </div>
+        </div>
     </div>
 
 </div>
 
-<!-- MODAL -->
-<div id="imageModal"
-     class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50">
+        <!-- TABLE -->
+        <div class="bg-white rounded-[32px] shadow-sm border border-gray-100/50 overflow-hidden">
 
-    <img id="modalImage"
-         class="max-w-3xl w-full rounded-xl shadow-lg">
+            <!-- HEADER -->
+            <div class="p-6 flex justify-between items-center">
+
+                <h2 class="text-2xl font-bold text-[#0f172a]">
+                    Riwayat Laporan Terbaru
+                </h2>
+
+                <form method="GET" action="{{ route('laporan.index') }}">
+
+                    <input type="text"
+                        name="search"
+                        placeholder="Cari Riwayat..."
+                        class="w-[300px] bg-gray-100 border-none rounded-2xl px-6 py-2 focus:ring-2 focus:ring-blue-500">
+
+                </form>
+
+            </div>
+
+            <!-- TABLE -->
+            <div class="overflow-x-auto">
+
+                <table class="w-full text-sm">
+
+                    <thead class="bg-slate-50/50 text-slate-400 uppercase text-[11px] tracking-widest">
+
+                        <tr>
+
+                            <th class="px-6 py-4 text-left font-semibold">
+                                Nama
+                            </th>
+
+                            <th class="px-6 py-4 text-left font-semibold">
+                                Kegiatan
+                            </th>
+
+                            <th class="px-6 py-4 text-left font-semibold">
+                                Status
+                            </th>
+
+                            <th class="px-6 py-4 text-left font-semibold">
+                                Tanggal
+                            </th>
+
+                            <th class="px-6 py-4 text-left font-semibold">
+                                Bukti
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-50">
+
+                        @forelse($laporans as $laporan)
+
+                        <tr class="hover:bg-slate-50 transition">
+
+                            <!-- NAMA -->
+                            <td class="px-6 py-4 font-semibold text-blue-600">
+                                {{ $laporan->nama_pelapor }}
+                            </td>
+
+                            <!-- KEGIATAN -->
+                            <td class="px-6 py-4 text-slate-600">
+                                {{ $laporan->kegiatan }}
+                            </td>
+
+                            <!-- STATUS -->
+                            <td class="px-6 py-4">
+
+                                @if($laporan->status == 'selesai')
+
+                                    <span class="bbg-green-100 text-green-700 px-3 py-1 rounded-lg text-[10px] font-bold uppercase">
+                                        SELESAI
+                                    </span>
+
+                                @elseif($laporan->status == 'diproses')
+
+                                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg text-[10px] font-bold uppercase">
+                                        PROSES
+                                    </span>
+
+                                @else
+
+                                    <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg text-[10px] font-bold uppercase">
+                                        MENUNGGU
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                            <!-- TANGGAL -->
+                            <td class="px-6 py-4 text-slate500">
+                                {{ $laporan->created_at->format('d M Y') }}
+                            </td>
+
+                            <!-- BUKTI -->
+                            <td class="px-6 py-4 text-center">
+
+                                @if($laporan->bukti)
+
+                                    <img src="{{ asset('storage/'.$laporan->bukti) }}"
+                                        class="w-16 h-16 object-cover rounded-2xl shadow cursor-pointer hover:scale-110 transition">
+
+                                @else
+
+                                    <span class="text-gray-400">
+                                        Tidak Ada
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center py-12 text-slate-400 text-lg">
+
+                                Belum ada laporan
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
 </div>
 
-<!-- SCRIPT -->
-<script>
-
-    function openModal(src) {
-
-        const modal = document.getElementById('imageModal');
-        const img = document.getElementById('modalImage');
-
-        img.src = src;
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-    }
-
-    function closeModal() {
-
-        const modal = document.getElementById('imageModal');
-
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-
-    // klik luar modal
-    document.getElementById('imageModal')
-        .addEventListener('click', function(e){
-
-        if(e.target === this){
-            closeModal();
-        }
-
-    });
-
-    // tombol ESC
-    document.addEventListener('keydown', function(e){
-
-        if(e.key === "Escape"){
-            closeModal();
-        }
-
-    });
-
-</script>
-
-@endsection
+</body>
+</html>

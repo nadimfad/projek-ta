@@ -61,12 +61,12 @@
 
             <!-- PASSWORD -->
             <div>
-                <div class="flex justify-between text-sm">
+                {{-- <div class="flex justify-between text-sm">
                     <label class="text-gray-500">Password</label>
                     <a href="#" class="text-indigo-600 hover:underline">
                         Lupa Password?
                     </a>
-                </div>
+                </div> --}}
 
                 <div class="group mt-1 flex items-center border rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-indigo-500">
                     <span class="text-gray-400 mr-2 group-focus-within:text-indigo-600 transition">

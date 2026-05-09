@@ -17,9 +17,9 @@
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
         <!-- LOGO -->
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('images/logo1.png') }}" class="h-10">
-            <span class="text-xl font-bold">SIGAP</span>
+        <div class="flex items-center gap-3 ml-4">
+            <img src="{{ asset('images/logo1.png') }}" class="h-16">
+            <span class="text-xl font-bold"></span>
         </div>
 
         <!-- MENU -->
