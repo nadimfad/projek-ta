@@ -14,7 +14,7 @@
 
 <!-- ================= NAVBAR ================= -->
 <header class="bg-white/80 backdrop-blur-md fixed w-full z-50 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
 
         <!-- LOGO -->
         <div class="flex items-center gap-3 ml-4">
@@ -28,16 +28,31 @@
             <a href="#faq" class="hover:text-indigo-600 transition">FAQ</a>
 
             @auth
-            <a href="{{ route('laporan.create') }}"
-               class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
-               Laporkan
-            </a>
-            @else
-            <a href="{{ route('login') }}"
-               class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
-               Login
-            </a>
-            @endauth
+
+    @if(auth()->user()->role == 'admin')
+
+        <a href="{{ route('dashboard') }}"
+           class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
+            Laporkan sekarang
+        </a>
+
+    @else
+
+        <a href="{{ route('laporan') }}"
+           class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
+            Laporkan Sekarang
+        </a>
+
+    @endif
+
+@else
+
+    <a href="{{ route('login') }}"
+       class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
+        Laporkan Sekarang
+    </a>
+
+@endauth
         </div>
 
     </div>
@@ -67,10 +82,32 @@
         <div data-aos="fade-up" data-aos-delay="200"
              class="flex justify-center gap-4 flex-wrap">
 
-            <a href="{{ route('laporan.create') }}"
-               class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 hover:bg-indigo-700 transition">
-               Mulai Melapor →
-            </a>
+            @auth
+
+    @if(auth()->user()->role == 'admin')
+
+        <a href="{{ route('dashboard') }}"
+           class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 hover:bg-indigo-700 transition">
+            Mulai Melapor →
+        </a>
+
+    @else
+
+        <a href="{{ route('laporan') }}"
+           class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 hover:bg-indigo-700 transition">
+            Mulai Melapor →
+        </a>
+
+    @endif
+
+@else
+
+    <a href="{{ route('login') }}"
+       class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 hover:bg-indigo-700 transition">
+        Mulai Melapor →
+    </a>
+
+@endauth
 
         </div>
 
@@ -232,7 +269,7 @@
                 <!-- BUTTON + LABEL -->
                 <div class="flex justify-center items-center gap-6 flex-wrap">
 
-                    <a href="{{ route('laporan.create') }}"
+                    <a href="{{ route('login') }}"
                        class="bg-white text-indigo-700 px-8 py-4 rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300 flex items-center gap-2">
 
                         Mulai Laporan Anonim

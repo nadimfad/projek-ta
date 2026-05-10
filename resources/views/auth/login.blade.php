@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Sikawan</title>
+    <title>Login - Sigap</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -21,9 +21,7 @@
 
         <!-- ICON -->
         <div class="flex justify-center mb-6">
-            <div class="w-16 h-16 bg-indigo-600 text-white flex items-center justify-center rounded-2xl shadow-lg">
-                🔒
-            </div>
+        <img src="{{ asset('images/logo1.png') }}" class="h-16 w-auto object-contain">
         </div>
 
         <!-- TITLE -->
@@ -32,7 +30,7 @@
         </h2>
 
         <p class="text-gray-500 text-center mb-6">
-            Masuk ke portal Sikawan untuk mengelola laporan Anda.
+            Masuk ke portal Sigap untuk mengelola laporan Anda.
         </p>
 
         <!-- FORM -->
@@ -95,7 +93,7 @@
 
         <!-- FOOTER -->
         <p class="text-center text-sm text-gray-400 mt-6">
-            © {{ date('Y') }} Sikawan System
+            © {{ date('Y') }} Sigap System
         </p>
 
     </div>
