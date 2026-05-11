@@ -8,7 +8,7 @@
         </h2>
     </x-slot>
 
-    <div class="p-6 bg-gray-100 min-h-screen">
+    <div class="p-6 bg-white-100 min-h-screen">
 
         <!-- FILTER -->
         <form method="GET" action="{{ route('dashboard') }}" class="mb-6 flex gap-3 flex-wrap">
@@ -52,150 +52,154 @@
         </form>
 
         <!-- STATISTIK -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
 
-    <!-- TOTAL -->
-    <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-5 rounded-xl shadow">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-sm opacity-80">Total Laporan</p>
-                <h1 id="totalLaporan" class="text-3xl font-bold">{{ $totalLaporan }}</h1>
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition hover:shadow-md">
+        <div class="flex flex-col gap-4">
+            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
             </div>
-            <div class="text-3xl">📊</div>
+            <div>
+                <h1 id="totalLaporan" class="text-3xl font-bold text-gray-800 tracking-tight">{{ $totalLaporan }}</h1>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Total Laporan</p>
+            </div>
         </div>
     </div>
 
-    <!-- MENUNGGU -->
-    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white p-5 rounded-xl shadow">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-sm opacity-80">Menunggu</p>
-                <h1 id="menunggu" class="text-3xl font-bold">{{ $laporanMenunggu }}</h1>
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition hover:shadow-md">
+        <div class="flex flex-col gap-4">
+            <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
             </div>
-            <div class="text-3xl">⏳</div>
+            <div>
+                <h1 id="menunggu" class="text-3xl font-bold text-gray-800 tracking-tight">{{ $laporanMenunggu }}</h1>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Dalam Proses</p>
+            </div>
         </div>
     </div>
 
-    <!-- DITERIMA -->
-    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-5 rounded-xl shadow">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-sm opacity-80">Diterima</p>
-                <h1 id="diterima" class="text-3xl font-bold">{{ $laporanDiterima }}</h1>
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition hover:shadow-md">
+        <div class="flex flex-col gap-4">
+            <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
             </div>
-            <div class="text-3xl">✅</div>
+            <div>
+                <h1 id="diterima" class="text-3xl font-bold text-gray-800 tracking-tight">{{ $laporanDiterima }}</h1>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Selesai</p>
+            </div>
         </div>
     </div>
 
-    <!-- DITOLAK -->
-    <div class="bg-gradient-to-r from-red-500 to-red-600 text-white p-5 rounded-xl shadow">
-        <div class="flex justify-between items-center">
-            <div>
-                <p class="text-sm opacity-80">Ditolak</p>
-                <h1 id="ditolak" class="text-3xl font-bold">{{ $laporanDitolak }}</h1>
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition hover:shadow-md">
+        <div class="flex flex-col gap-4">
+            <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
             </div>
-            <div class="text-3xl">❌</div>
+            <div>
+                <h1 id="ditolak" class="text-3xl font-bold text-gray-800 tracking-tight">{{ $laporanDitolak }}</h1>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Ditolak</p>
+            </div>
         </div>
     </div>
 
 </div>
 
 <!-- TABEL -->
-<x-card>
-    <h2 class="text-lg font-semibold mb-4">Laporan Terbaru</h2>
+<div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+    <h2 class="text-xl font-bold text-gray-800 mb-6">Laporan Terbaru</h2>
 
-    <!-- WRAPPER SCROLL -->
-    <div class="max-h-[400px] overflow-y-auto border rounded-lg">
+    <div class="max-h-[400px] overflow-y-auto">
+        <table class="w-full text-sm text-left border-collapse">
 
-        <table class="w-full text-sm text-center border-separate border-spacing-y-2">
-
-            <!-- HEADER -->
-            <thead class="text-gray-500 border-b bg-white sticky top-0 z-10">
-                <tr class="bg-white shadow-sm rounded-lg hover:shadow-md transition">
-                    <th class="py-3">Nama</th>
-                    <th>Kegiatan</th>
-                    <th>Deskripsi</th>
-                    <th>Bukti</th>
-                    <th>Status</th>
-                    <th>Tanggal</th>
+            <thead class="sticky top-0 z-10 bg-white">
+                <tr class="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
+                    <th class="pb-4 px-4">Nama</th>
+                    <th class="pb-4 px-4">Kegiatan</th>
+                    <th class="pb-4 px-4">Deskripsi</th>
+                    <th class="pb-4 px-4 text-center">Bukti</th>
+                    <th class="pb-4 px-4 text-center">Status</th>
+                    <th class="pb-4 px-4 text-right">Tanggal</th>
                 </tr>
             </thead>
 
-            <tbody class="divide-y">
+            <tbody class="divide-y divide-gray-50">
                 @forelse ($laporanTerbaru as $laporan)
-                <tr class="hover:bg-gray-50 transition">
+                <tr class="hover:bg-gray-50 transition group">
 
-                    <!-- Nama -->
-                    <td class="py-3">{{ $laporan->nama_pelapor }}</td>
-
-                    <!-- Kegiatan -->
-                    <td>{{ $laporan->kegiatan }}</td>
-
-                    <!-- Deskripsi -->
-                    <td class="max-w-xs truncate px-3"
-                        title="{{ $laporan->deskripsi }}">
-                        {{ $laporan->deskripsi }}
+                    <td class="py-5 px-4 font-semibold text-gray-700">
+                        {{ $laporan->nama_pelapor }}
                     </td>
 
-                    <!-- Bukti -->
-                    <td class="flex justify-center py-2">
-                        @if ($laporan->bukti)
-                            <img src="{{ asset('storage/' . $laporan->bukti) }}"
-                                 onclick="openModal(this.src)"
-                                 class="w-16 h-16 object-cover rounded shadow hover:scale-105 transition cursor-pointer">
-                        @else
-                            <span class="text-gray-400">-</span>
-                        @endif
+                    <td class="py-5 px-4 text-gray-500">
+                        {{ $laporan->kegiatan }}
                     </td>
 
-                    <!-- Status -->
-                    <td>
-                        <form action="{{ route('laporan.update', $laporan->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-
-                            <select name="status"
-                                onchange="this.form.submit()"
-                                class="text-xs rounded border-gray-300 px-2 py-1 mb-1">
-
-                                <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>
-                                    Menunggu
-                                </option>
-                                <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>
-                                    Diterima
-                                </option>
-                                <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>
-                                    Ditolak
-                                </option>
-                            </select>
-                        </form>
-
-                        <span class="px-3 py-1 text-xs rounded-full font-semibold
-                            @if($laporan->status == 'diterima') bg-green-100 text-green-600
-                            @elseif($laporan->status == 'ditolak') bg-red-100 text-red-600
-                            @else bg-yellow-100 text-yellow-600
-                            @endif">
-                            {{ ucfirst($laporan->status) }}
-                        </span>
+                    <td class="py-5 px-4">
+                        <p class="max-w-xs truncate text-gray-500" title="{{ $laporan->deskripsi }}">
+                            {{ $laporan->deskripsi }}
+                        </p>
                     </td>
 
-                    <!-- Tanggal -->
-                    <td>{{ $laporan->created_at->format('d M Y') }}</td>
+                    <td class="py-5 px-4">
+                        <div class="flex justify-center">
+                            @if ($laporan->bukti)
+                                <img src="{{ asset('storage/' . $laporan->bukti) }}"
+                                     onclick="openModal(this.src)"
+                                     class="w-12 h-12 object-cover rounded-xl shadow-sm hover:scale-110 transition cursor-pointer ring-2 ring-white">
+                            @else
+                                <span class="text-gray-300">—</span>
+                            @endif
+                        </div>
+                    </td>
+
+                    <td class="py-5 px-4 text-center">
+                        <div class="flex flex-col items-center gap-1">
+                            <form action="{{ route('laporan.update', $laporan->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <select name="status"
+                                    onchange="this.form.submit()"
+                                    class="text-[10px] rounded-lg border-gray-200 px-2 py-0.5 mb-1 bg-gray-50 text-gray-500 outline-none focus:ring-1 focus:ring-blue-400">
+                                    <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Set Menunggu</option>
+                                    <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Set Diterima</option>
+                                    <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Set Ditolak</option>
+                                </select>
+                            </form>
+
+                            <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg
+                                @if($laporan->status == 'diterima') bg-green-50 text-green-500
+                                @elseif($laporan->status == 'ditolak') bg-red-50 text-red-500
+                                @else bg-orange-50 text-orange-500
+                                @endif">
+                                {{ $laporan->status == 'menunggu' ? 'DALAM PROSES' : $laporan->status }}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td class="py-5 px-4 text-right text-gray-400 font-medium">
+                        {{ $laporan->created_at->format('d M Y') }}
+                    </td>
 
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center py-4 text-gray-400">
-                        Tidak ada data
+                    <td colspan="6" class="text-center py-10 text-gray-400 italic">
+                        Tidak ada data laporan.
                     </td>
                 </tr>
                 @endforelse
             </tbody>
-
         </table>
-
     </div>
-</x-card>
+</div>
 
         <!-- CHARTS -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">

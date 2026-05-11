@@ -45,7 +45,7 @@
 
                 <div>
                     <h1 class="text-x1 font-bold text-slate-800 tracking-tight">
-                        SIKAWAN
+                        SIGAP
                     </h1>
                 </div>
 
@@ -58,7 +58,17 @@
                    class="flex items-center gap-4 bg-blue-50 text-blue-600 px-5 py-4 rounded-2xl font-semibold">
 
                     <!-- ICON -->
-                    <svg xmlns="http://www.w3.org/2000/svg"
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+
+                    Dashboard
+                </a>
+
+                <a href="{{ route('laporan.history') }}"
+                   class="flex items-center gap-4 text-slate-600 hover:bg-gray-100 px-5 py-4 rounded-2xl font-semibold">
+
+                   <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-6 h-6"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -71,27 +81,8 @@
                             2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
                     </svg>
 
-                    Laporan Saya
-                </a>
 
-                <a href="#"
-                   class="flex items-center gap-4 text-slate-600 hover:bg-gray-100 px-5 py-4 rounded-2xl font-medium transition">
-
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-6 h-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0
-                            4.847.655 6.879 1.804M15 11a3 3 0 11-6
-                            0 3 3 0 016 0z"/>
-                    </svg>
-
-                    Profil
+                    Riwayat Laporan
                 </a>
 
             </div>
@@ -366,16 +357,85 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+{{-- ===============================
+🔥 MODERN SUCCESS POPUP
+=============================== --}}
 @if(session('success'))
+
+<div id="successPopup"
+     class="fixed top-6 right-6 z-[9999] translate-x-[120%] opacity-0 transition-all duration-500">
+
+    <div class="backdrop-blur-xl bg-white/80 border border-white/30 shadow-2xl rounded-2xl px-5 py-4 flex items-start gap-4 min-w-[320px]">
+
+        <!-- ICON -->
+        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center shadow-inner">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="w-7 h-7 text-green-600"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7" />
+
+            </svg>
+
+        </div>
+
+        <!-- TEXT -->
+        <div class="flex-1">
+
+            <h3 class="font-semibold text-gray-800 text-sm">
+                Login Berhasil
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-1">
+                {{ session('success') }}
+            </p>
+
+        </div>
+
+        <!-- CLOSE -->
+        <button onclick="closePopup()"
+                class="text-gray-400 hover:text-gray-600 transition">
+
+            ✕
+
+        </button>
+
+    </div>
+
+</div>
+
 <script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Login Berhasil',
-        text: '{{ session('success') }}',
-        timer: 1800,
-        showConfirmButton: false
-    });
+
+    const popup = document.getElementById('successPopup');
+
+    // muncul smooth
+    setTimeout(() => {
+
+        popup.classList.remove('translate-x-[120%]', 'opacity-0');
+
+    }, 100);
+
+    // auto close
+    setTimeout(() => {
+
+        closePopup();
+
+    }, 3500);
+
+    function closePopup() {
+
+        popup.classList.add('translate-x-[120%]', 'opacity-0');
+
+    }
+
 </script>
+
 @endif
 </body>
 </html>

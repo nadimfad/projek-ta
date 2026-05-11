@@ -24,7 +24,7 @@
 
         <!-- MENU -->
         <div class="flex items-center gap-8 text-sm font-medium">
-            <a href="#cara-kerja" class="hover:text-indigo-600 transition">Cara Kerja</a>
+            <a href="#cara-lapor" class="hover:text-indigo-600 transition">Cara Lapor</a>
             <a href="#faq" class="hover:text-indigo-600 transition">FAQ</a>
 
             @auth
@@ -115,70 +115,106 @@
 </section>
 
 <!-- ================= CARA MELAPOR ================= -->
-<section id="cara-kerja" class="bg-white py-20 px-6">
-    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+<section id="cara-lapor" class="bg-white py-20 px-6">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center" data-aos="fade-up">
 
-        <!-- LEFT -->
-        <div data-aos="fade-right">
-            <p class="text-indigo-600 font-semibold mb-3">CARA MELAPOR</p>
+        <!-- LEFT CONTENT -->
+        <div>
+
+            <p class="text-indigo-600 font-bold mb-3 tracking-wide">
+                CARA MELAPOR
+            </p>
 
             <h2 class="text-3xl md:text-4xl font-bold mb-10">
-                Proses Mudah & Cepat
+                Proses Pelaporan yang <br>
+                Mudah & Cepat
             </h2>
 
+            <!-- STEP LIST -->
             <div class="space-y-10 relative">
 
+                <!-- garis vertical -->
                 <div class="absolute left-5 top-0 bottom-0 w-[2px] bg-gray-200"></div>
 
-                <!-- STEP -->
-                <div class="flex gap-6">
-                    <div class="w-10 h-10 flex items-center justify-center 
-                        rounded-full border-2 border-indigo-500 text-indigo-600 font-bold">
+                <!-- STEP 1 -->
+                <div class="flex items-start gap-6 relative">
+                    <div class="z-10 w-10 h-10 flex items-center justify-center 
+                        rounded-full border-2 border-indigo-500 text-indigo-600 font-bold bg-white">
                         01
                     </div>
+
                     <div>
                         <h3 class="font-semibold text-lg">Siapkan Data</h3>
-                        <p class="text-gray-500">Kumpulkan bukti dan detail kejadian</p>
+                        <p class="text-gray-500">
+                            Kumpulkan detail kejadian, penerima/pemberi, dan bukti pendukung (foto/dokumen).
+                        </p>
                     </div>
                 </div>
 
-                <div class="flex gap-6">
-                    <div class="w-10 h-10 flex items-center justify-center 
-                        rounded-full border-2 border-indigo-500 text-indigo-600 font-bold">
+                <!-- STEP 2 -->
+                <div class="flex items-start gap-6 relative">
+                    <div class="z-10 w-10 h-10 flex items-center justify-center 
+                        rounded-full border-2 border-indigo-500 text-indigo-600 font-bold bg-white">
                         02
                     </div>
+
                     <div>
                         <h3 class="font-semibold text-lg">Isi Formulir</h3>
-                        <p class="text-gray-500">Isi data dengan lengkap (bisa anonim)</p>
+                        <p class="text-gray-500">
+                            Lengkapi data melalui platform. Anda dapat memilih untuk tetap anonim.
+                        </p>
                     </div>
                 </div>
 
-                <div class="flex gap-6">
-                    <div class="w-10 h-10 flex items-center justify-center 
-                        rounded-full border-2 border-indigo-500 text-indigo-600 font-bold">
+                <!-- STEP 3 -->
+                <div class="flex items-start gap-6 relative">
+                    <div class="z-10 w-10 h-10 flex items-center justify-center 
+                        rounded-full border-2 border-indigo-500 text-indigo-600 font-bold bg-white">
                         03
                     </div>
+
                     <div>
-                        <h3 class="font-semibold text-lg">Verifikasi</h3>
-                        <p class="text-gray-500">Tim akan memproses laporan Anda</p>
+                        <h3 class="font-semibold text-lg">Verifikasi & Tindak Lanjut</h3>
+                        <p class="text-gray-500">
+                            Tim akan meninjau laporan Anda dan memberikan tindak lanjut sesuai prosedur.
+                        </p>
                     </div>
                 </div>
-
+                
             </div>
+
         </div>
 
-        <!-- RIGHT MOCKUP -->
-        <div data-aos="fade-left"
-             class="bg-gray-100 rounded-3xl p-6 shadow-inner hover:scale-105 transition">
+        <!-- RIGHT CONTENT (MOCKUP UI) -->
+        <div class="bg-gray-100 rounded-3xl p-6 shadow-inner">
 
-            <div class="space-y-4 animate-pulse">
-                <div class="h-10 bg-gray-200 rounded"></div>
+            <!-- header fake window -->
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+
+                <span class="ml-auto text-xs text-gray-400">
+                    SIGAP SECURE PORTAL
+                </span>
+            </div>
+
+            <!-- fake form -->
+            <div class="space-y-4">
+
+                <div class="h-10 bg-gray-200 rounded-lg"></div>
+
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="h-28 bg-gray-200 rounded"></div>
-                    <div class="h-28 bg-gray-200 rounded"></div>
+                    <div class="h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-sm">
+                        Upload Bukti
+                    </div>
+                    <div class="h-28 bg-gray-200 rounded-lg"></div>
                 </div>
-                <div class="h-10 bg-gray-200 rounded"></div>
-                <div class="h-12 bg-indigo-600 rounded"></div>
+
+                <div class="h-10 bg-gray-200 rounded-lg"></div>
+
+                <div class="h-12 bg-indigo-600 rounded-lg"></div>
+
             </div>
 
         </div>
