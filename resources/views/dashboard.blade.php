@@ -10,47 +10,6 @@
 
     <div class="p-6 bg-white-100 min-h-screen">
 
-        <!-- FILTER -->
-        <form method="GET" action="{{ route('dashboard') }}" class="mb-6 flex gap-3 flex-wrap">
-
-            <select name="kegiatan"
-                class="border-gray-300 rounded-lg shadow-sm">
-
-                <option value=""> Semua Kegiatan </option>
-
-                <option value="Seminar Kerja Praktek"
-                    {{ request('kegiatan') == 'Seminar Kerja Praktek' ? 'selected' : '' }}>
-                    Seminar Kerja Praktek
-                </option>
-
-                <option value="Seminar Proposal"
-                    {{ request('kegiatan') == 'Seminar Proposal' ? 'selected' : '' }}>
-                    Seminar Proposal
-                </option>
-
-                <option value="Seminar Hasil/Sidang Tertutup"
-                    {{ request('kegiatan') == 'Seminar Hasil/Sidang Tertutup' ? 'selected' : '' }}>
-                    Seminar Hasil
-                </option>
-
-                <option value="Seminar Akhir/Sidang Terbuka"
-                    {{ request('kegiatan') == 'Seminar Akhir/Sidang Terbuka' ? 'selected' : '' }}>
-                    Seminar Akhir
-                </option>
-
-            </select>
-
-            <button class="bg-indigo-600 text-white px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition">
-                Filter
-            </button>
-
-            <a href="{{ route('dashboard') }}"
-               class="bg-gray-400 text-white px-4 py-2 rounded-lg">
-                Reset
-            </a>
-
-        </form>
-
         <!-- STATISTIK -->
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
 
@@ -111,6 +70,49 @@
     </div>
 
 </div>
+
+ <div class="p-6 bg-white-100 min-h-screen">
+
+        <!-- FILTER -->
+        <form method="GET" action="{{ route('dashboard') }}" class="mb-6 flex gap-3 flex-wrap">
+
+            <select name="kegiatan"
+                class="border-gray-300 rounded-lg shadow-sm">
+
+                <option value=""> Semua Kegiatan </option>
+
+                <option value="Seminar Kerja Praktek"
+                    {{ request('kegiatan') == 'Seminar Kerja Praktek' ? 'selected' : '' }}>
+                    Seminar Kerja Praktek
+                </option>
+
+                <option value="Seminar Proposal"
+                    {{ request('kegiatan') == 'Seminar Proposal' ? 'selected' : '' }}>
+                    Seminar Proposal
+                </option>
+
+                <option value="Seminar Hasil/Sidang Tertutup"
+                    {{ request('kegiatan') == 'Seminar Hasil/Sidang Tertutup' ? 'selected' : '' }}>
+                    Seminar Hasil
+                </option>
+
+                <option value="Seminar Akhir/Sidang Terbuka"
+                    {{ request('kegiatan') == 'Seminar Akhir/Sidang Terbuka' ? 'selected' : '' }}>
+                    Seminar Akhir
+                </option>
+
+            </select>
+
+            <button class="bg-indigo-600 text-white px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition">
+                Filter
+            </button>
+
+            <a href="{{ route('dashboard') }}"
+               class="bg-gray-400 text-white px-4 py-2 rounded-lg">
+                Reset
+            </a>
+
+        </form>
 
 <!-- TABEL -->
 <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
