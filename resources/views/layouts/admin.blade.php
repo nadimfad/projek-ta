@@ -27,6 +27,7 @@
 
     <nav class="flex-1 px-4 space-y-1">
         
+        @if(auth()->user()->role == 'admin')
         <a href="{{ route('dashboard') }}"
            class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,28 +35,43 @@
             </svg>
             Dashboard
         </a>
+        @endif
 
-        <a href="{{ route('laporan.index') }}"
-           class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('laporan.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
+        <a href="{{ auth()->user()->role == 'admin' ? route('admin.laporan.index') : route('laporan.index') }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('laporan.*') || request()->routeIs('admin.laporan.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             Laporan
         </a>
 
-        <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium text-gray-500 hover:bg-gray-50">
+        @if(auth()->user()->role == 'dosen')
+        <a href="{{ route('laporan.history') }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('laporan.history') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z" />
+            </svg>
+            Riwayat
+        </a>
+        @endif
+
+        @if(auth()->user()->role == 'admin')
+        <a href="{{ route('admin.users.index') }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.users.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             Manajemen User
         </a>
 
-        <a href="#" class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium text-gray-500 hover:bg-gray-50">
+        <a href="{{ route('admin.statistik') }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.statistik') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
             </svg>
             Statistik
         </a>
+        @endif
 
     </nav>
 
@@ -83,7 +99,7 @@
                 @yield('title', 'Pusat Kendali Laporan')
             </h1>
             <p class="text-sm text-gray-400 mt-1">
-                Selamat bertugas, Administrator.
+                {{ auth()->user()->role == 'admin' ? 'Selamat bertugas, Administrator.' : 'Pantau dan kelola laporan Anda.' }}
             </p>
         </div>
 

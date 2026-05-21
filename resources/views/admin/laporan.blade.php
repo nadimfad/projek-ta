@@ -1,40 +1,34 @@
-@extends('laporan.layout')
+@extends('layouts.admin')
 
-@section('title', auth()->user()->role == 'admin' ? 'Semua Laporan' : 'Laporan Saya')
+@section('title', 'Seluruh Laporan')
 
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-            <h2 class="text-xl font-bold text-gray-800">
-                {{ auth()->user()->role == 'admin' ? 'Daftar Semua Laporan' : 'Daftar Laporan Saya' }}
-            </h2>
-            <p class="text-sm text-gray-400 mt-1">
-                {{ auth()->user()->role == 'admin' ? 'Seluruh data laporan tersimpan di halaman ini.' : 'Pantau laporan yang pernah Anda kirim.' }}
-            </p>
+            <h2 class="text-xl font-bold text-gray-800">Seluruh Laporan Dosen</h2>
+            <p class="text-sm text-gray-400 mt-1">Semua laporan yang dikirim oleh dosen tersimpan di halaman ini.</p>
         </div>
 
-        <div class="flex flex-wrap gap-3">
-            <form method="GET" action="{{ auth()->user()->role == 'admin' ? route('admin.laporan.index') : route('laporan.index') }}" class="flex flex-wrap gap-3">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari laporan..." class="w-full md:w-[260px] rounded-lg border-gray-200 text-sm shadow-sm">
+        <form method="GET" action="{{ route('admin.laporan.index') }}" class="flex flex-wrap gap-3">
+            <input type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Cari laporan..."
+                class="w-full md:w-[260px] rounded-lg border-gray-200 text-sm shadow-sm">
 
-                <select name="kegiatan" class="border-gray-200 rounded-lg shadow-sm text-sm">
-                    <option value="">Semua Kegiatan</option>
-                    <option value="Seminar Kerja Praktek" {{ request('kegiatan') == 'Seminar Kerja Praktek' ? 'selected' : '' }}>Seminar Kerja Praktek</option>
-                    <option value="Seminar Proposal" {{ request('kegiatan') == 'Seminar Proposal' ? 'selected' : '' }}>Seminar Proposal</option>
-                    <option value="Seminar Hasil/Sidang Tertutup" {{ request('kegiatan') == 'Seminar Hasil/Sidang Tertutup' ? 'selected' : '' }}>Seminar Hasil</option>
-                    <option value="Seminar Akhir/Sidang Terbuka" {{ request('kegiatan') == 'Seminar Akhir/Sidang Terbuka' ? 'selected' : '' }}>Seminar Akhir</option>
-                </select>
+            <select name="kegiatan" class="border-gray-200 rounded-lg shadow-sm text-sm">
+                <option value="">Semua Kegiatan</option>
+                <option value="Seminar Kerja Praktek" {{ request('kegiatan') == 'Seminar Kerja Praktek' ? 'selected' : '' }}>Seminar Kerja Praktek</option>
+                <option value="Seminar Proposal" {{ request('kegiatan') == 'Seminar Proposal' ? 'selected' : '' }}>Seminar Proposal</option>
+                <option value="Seminar Hasil/Sidang Tertutup" {{ request('kegiatan') == 'Seminar Hasil/Sidang Tertutup' ? 'selected' : '' }}>Seminar Hasil</option>
+                <option value="Seminar Akhir/Sidang Terbuka" {{ request('kegiatan') == 'Seminar Akhir/Sidang Terbuka' ? 'selected' : '' }}>Seminar Akhir</option>
+            </select>
 
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Filter</button>
-            </form>
-
-            @if(auth()->user()->role == 'dosen')
-                <a href="{{ route('laporan.create') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                    Tambah Laporan
-                </a>
-            @endif
-        </div>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+                Filter
+            </button>
+        </form>
     </div>
 
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -58,17 +52,15 @@
                         <td class="px-6 py-5 text-gray-500">{{ $laporan->email }}</td>
                         <td class="px-6 py-5 text-gray-500">{{ $laporan->kegiatan }}</td>
                         <td class="px-6 py-5">
-                            @if(auth()->user()->role == 'admin')
-                                <form action="{{ route('laporan.update', $laporan->id) }}" method="POST" class="mb-2">
-                                    @csrf
-                                    @method('PUT')
-                                    <select name="status" onchange="this.form.submit()" class="text-[11px] rounded-lg border-gray-200 px-2 py-1 bg-gray-50 text-gray-500">
-                                        <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Set Menunggu</option>
-                                        <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Set Diterima</option>
-                                        <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Set Ditolak</option>
-                                    </select>
-                                </form>
-                            @endif
+                            <form action="{{ route('laporan.update', $laporan->id) }}" method="POST" class="mb-2">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" onchange="this.form.submit()" class="text-[11px] rounded-lg border-gray-200 px-2 py-1 bg-gray-50 text-gray-500">
+                                    <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Set Menunggu</option>
+                                    <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Set Diterima</option>
+                                    <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Set Ditolak</option>
+                                </select>
+                            </form>
 
                             <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg
                                 @if($laporan->status == 'diterima') bg-green-50 text-green-600

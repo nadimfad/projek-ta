@@ -1,23 +1,17 @@
-@extends('laporan.layout')
+@extends('layouts.admin')
 
-@section('title', auth()->user()->role == 'admin' ? 'Semua Laporan' : 'Laporan Saya')
+@section('title', 'Dashboard Admin')
 
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-            <h2 class="text-xl font-bold text-gray-800">
-                {{ auth()->user()->role == 'admin' ? 'Daftar Semua Laporan' : 'Daftar Laporan Saya' }}
-            </h2>
-            <p class="text-sm text-gray-400 mt-1">
-                {{ auth()->user()->role == 'admin' ? 'Seluruh data laporan tersimpan di halaman ini.' : 'Pantau laporan yang pernah Anda kirim.' }}
-            </p>
+            <h2 class="text-xl font-bold text-gray-800">10 Laporan Terbaru</h2>
+            <p class="text-sm text-gray-400 mt-1">Data selebihnya otomatis tetap tersimpan di halaman Laporan.</p>
         </div>
 
         <div class="flex flex-wrap gap-3">
-            <form method="GET" action="{{ auth()->user()->role == 'admin' ? route('admin.laporan.index') : route('laporan.index') }}" class="flex flex-wrap gap-3">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari laporan..." class="w-full md:w-[260px] rounded-lg border-gray-200 text-sm shadow-sm">
-
+            <form method="GET" action="{{ route('dashboard') }}" class="flex gap-3">
                 <select name="kegiatan" class="border-gray-200 rounded-lg shadow-sm text-sm">
                     <option value="">Semua Kegiatan</option>
                     <option value="Seminar Kerja Praktek" {{ request('kegiatan') == 'Seminar Kerja Praktek' ? 'selected' : '' }}>Seminar Kerja Praktek</option>
@@ -26,14 +20,14 @@
                     <option value="Seminar Akhir/Sidang Terbuka" {{ request('kegiatan') == 'Seminar Akhir/Sidang Terbuka' ? 'selected' : '' }}>Seminar Akhir</option>
                 </select>
 
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Filter</button>
+                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+                    Filter
+                </button>
             </form>
 
-            @if(auth()->user()->role == 'dosen')
-                <a href="{{ route('laporan.create') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                    Tambah Laporan
-                </a>
-            @endif
+            <a href="{{ route('admin.laporan.index') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
+                Lihat Semua
+            </a>
         </div>
     </div>
 
@@ -43,32 +37,41 @@
                 <thead class="bg-gray-50 text-gray-400 uppercase text-[11px] tracking-widest">
                     <tr>
                         <th class="px-6 py-4 text-left font-semibold">Nama</th>
-                        <th class="px-6 py-4 text-left font-semibold">Email</th>
                         <th class="px-6 py-4 text-left font-semibold">Kegiatan</th>
-                        <th class="px-6 py-4 text-left font-semibold">Status</th>
+                        <th class="px-6 py-4 text-left font-semibold">Deskripsi</th>
                         <th class="px-6 py-4 text-center font-semibold">Bukti</th>
+                        <th class="px-6 py-4 text-center font-semibold">Status</th>
                         <th class="px-6 py-4 text-right font-semibold">Tanggal</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-50">
-                    @forelse($laporans as $laporan)
+                    @forelse ($laporanTerbaru as $laporan)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-5 font-semibold text-gray-700">{{ $laporan->nama_pelapor }}</td>
-                        <td class="px-6 py-5 text-gray-500">{{ $laporan->email }}</td>
                         <td class="px-6 py-5 text-gray-500">{{ $laporan->kegiatan }}</td>
                         <td class="px-6 py-5">
-                            @if(auth()->user()->role == 'admin')
-                                <form action="{{ route('laporan.update', $laporan->id) }}" method="POST" class="mb-2">
-                                    @csrf
-                                    @method('PUT')
-                                    <select name="status" onchange="this.form.submit()" class="text-[11px] rounded-lg border-gray-200 px-2 py-1 bg-gray-50 text-gray-500">
-                                        <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Set Menunggu</option>
-                                        <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Set Diterima</option>
-                                        <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Set Ditolak</option>
-                                    </select>
-                                </form>
+                            <p class="max-w-xs truncate text-gray-500" title="{{ $laporan->deskripsi }}">
+                                {{ $laporan->deskripsi }}
+                            </p>
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            @if ($laporan->bukti)
+                                <img src="{{ asset('storage/' . $laporan->bukti) }}" onclick="openModal(this.src)" class="w-12 h-12 object-cover rounded-xl shadow-sm hover:scale-110 transition cursor-pointer mx-auto">
+                            @else
+                                <span class="text-gray-300">-</span>
                             @endif
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            <form action="{{ route('laporan.update', $laporan->id) }}" method="POST" class="mb-2">
+                                @csrf
+                                @method('PUT')
+                                <select name="status" onchange="this.form.submit()" class="text-[11px] rounded-lg border-gray-200 px-2 py-1 bg-gray-50 text-gray-500">
+                                    <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>Set Menunggu</option>
+                                    <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Set Diterima</option>
+                                    <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Set Ditolak</option>
+                                </select>
+                            </form>
 
                             <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg
                                 @if($laporan->status == 'diterima') bg-green-50 text-green-600
@@ -78,14 +81,7 @@
                                 {{ $laporan->status == 'menunggu' ? 'Dalam Proses' : $laporan->status }}
                             </span>
                         </td>
-                        <td class="px-6 py-5 text-center">
-                            @if($laporan->bukti)
-                                <img src="{{ asset('storage/'.$laporan->bukti) }}" onclick="openModal(this.src)" class="w-14 h-14 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-110 transition mx-auto">
-                            @else
-                                <span class="text-gray-300">Tidak Ada</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-5 text-right text-gray-400">{{ $laporan->created_at->format('d M Y') }}</td>
+                        <td class="px-6 py-5 text-right text-gray-400 font-medium">{{ $laporan->created_at->format('d M Y') }}</td>
                     </tr>
                     @empty
                     <tr>

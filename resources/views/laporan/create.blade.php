@@ -140,7 +140,9 @@
 
                             <input type="text"
                                    name="nama_pelapor"
+                                   value="{{ old('nama_pelapor', auth()->user()->name) }}"
                                    placeholder="Masukkan nama"
+                                   readonly
                                    class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500">
 
                         </div>
@@ -154,8 +156,10 @@
 
                             <input type="email"
                                    name="email"
+                                   value="{{ old('email', auth()->user()->email) }}"
                                    placeholder="nama@email.com"
-                                   class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500">
+                                   readonly
+                                   class="w-full rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none cursor-not-allowed focus:ring-2 focus:ring-indigo-500">
 
                         </div>
 

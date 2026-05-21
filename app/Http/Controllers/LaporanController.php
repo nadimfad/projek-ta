@@ -20,9 +20,20 @@ class LaporanController extends Controller
             $query->where('kegiatan', $request->kegiatan);
         }
 
+        if ($request->search) {
+            $query->where(function ($subQuery) use ($request) {
+                $subQuery->where('nama_pelapor', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%')
+                    ->orWhere('kegiatan', 'like', '%'.$request->search.'%')
+                    ->orWhere('status', 'like', '%'.$request->search.'%');
+            });
+        }
+
         // 🔐 ROLE CHECK
         if (auth()->user()->role == 'admin') {
             $laporans = $query->latest()->get();
+
+            return view('admin.laporan', compact('laporans'));
         } else {
             $laporans = $query
                 ->where('email', auth()->user()->email)
@@ -65,24 +76,6 @@ class LaporanController extends Controller
         Laporan::create($data);
 
         return redirect('/laporan')->with('success', 'Data berhasil ditambahkan');
-    }
-
-    // =========================
-    // SHOW
-    // =========================
-    public function show($id)
-    {
-        $laporan = Laporan::findOrFail($id);
-        return view('laporan.show', compact('laporan'));
-    }
-
-    // =========================
-    // EDIT
-    // =========================
-    public function edit($id)
-    {
-        $laporan = Laporan::findOrFail($id);
-        return view('laporan.edit', compact('laporan'));
     }
 
     // =========================
