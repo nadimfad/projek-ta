@@ -2,17 +2,21 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <x-input-label for="nama" :value="__('Nama Dosen')" />
+            <x-text-input id="nama" class="block mt-1 w-full" type="text" name="nama" :value="old('nama')" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('nama')" class="mt-2" />
         </div>
 
-        <!-- Email Address -->
+        <div class="mt-4">
+            <x-input-label for="nip" :value="__('NIP')" />
+            <x-text-input id="nip" class="block mt-1 w-full" type="text" name="nip" :value="old('nip')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('nip')" class="mt-2" />
+        </div>
+
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="email" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 

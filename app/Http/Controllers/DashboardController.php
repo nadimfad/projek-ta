@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dosen;
+use App\Models\Kegiatan;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,69 +13,62 @@ class DashboardController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Laporan::query();
+        $query = Laporan::with(['dosen', 'kegiatan']);
 
-        if ($request->kegiatan) {
-            $query->where('kegiatan', $request->kegiatan);
+        if ($request->id_kegiatan) {
+            $query->where('id_kegiatan', $request->id_kegiatan);
         }
 
         $laporanTerbaru = (clone $query)->latest()->take(10)->get();
+        $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
-        return view('admin.dashboard', compact('laporanTerbaru'));
+        return view('admin.dashboard', compact('laporanTerbaru', 'kegiatans'));
     }
 
     public function statistik(Request $request): View
     {
         $query = Laporan::query();
 
-        if ($request->kegiatan) {
-            $query->where('kegiatan', $request->kegiatan);
+        if ($request->id_kegiatan) {
+            $query->where('id_kegiatan', $request->id_kegiatan);
         }
 
         $totalLaporan = (clone $query)->count();
-        $laporanMenunggu = (clone $query)->where('status', 'menunggu')->count();
-        $laporanDiterima = (clone $query)->where('status', 'diterima')->count();
-        $laporanDitolak = (clone $query)->where('status', 'ditolak')->count();
+        $totalDosen = Dosen::count();
+        $totalKegiatan = Kegiatan::count();
 
         $monthly = (clone $query)->select(
-            DB::raw('MONTH(created_at) as bulan'),
-            DB::raw("SUM(CASE WHEN status='menunggu' THEN 1 ELSE 0 END) as menunggu"),
-            DB::raw("SUM(CASE WHEN status='diterima' THEN 1 ELSE 0 END) as diterima"),
-            DB::raw("SUM(CASE WHEN status='ditolak' THEN 1 ELSE 0 END) as ditolak")
+            DB::raw('MONTH(tanggal_kegiatan) as bulan'),
+            DB::raw('COUNT(*) as total')
         )
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->get();
 
-        $dataMenunggu = array_fill(0, 12, 0);
-        $dataDiterima = array_fill(0, 12, 0);
-        $dataDitolak = array_fill(0, 12, 0);
+        $dataBulanan = array_fill(0, 12, 0);
 
         foreach ($monthly as $item) {
-            $index = $item->bulan - 1;
-            $dataMenunggu[$index] = $item->menunggu;
-            $dataDiterima[$index] = $item->diterima;
-            $dataDitolak[$index] = $item->ditolak;
+            $dataBulanan[$item->bulan - 1] = $item->total;
         }
 
         $kegiatanChart = (clone $query)
-            ->select('kegiatan', DB::raw('COUNT(*) as total'))
-            ->groupBy('kegiatan')
+            ->join('kegiatans', 'laporans.id_kegiatan', '=', 'kegiatans.id_kegiatan')
+            ->select('kegiatans.jenis_kegiatan', DB::raw('COUNT(*) as total'))
+            ->groupBy('kegiatans.jenis_kegiatan')
             ->get();
 
-        $labelKegiatan = $kegiatanChart->pluck('kegiatan');
+        $labelKegiatan = $kegiatanChart->pluck('jenis_kegiatan');
         $dataKegiatan = $kegiatanChart->pluck('total');
+        $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
         return view('admin.statistik', compact(
             'totalLaporan',
-            'laporanMenunggu',
-            'laporanDiterima',
-            'laporanDitolak',
-            'dataMenunggu',
-            'dataDiterima',
-            'dataDitolak',
+            'totalDosen',
+            'totalKegiatan',
+            'dataBulanan',
             'labelKegiatan',
-            'dataKegiatan'
+            'dataKegiatan',
+            'kegiatans'
         ));
     }
 
@@ -81,46 +76,35 @@ class DashboardController extends Controller
     {
         $query = Laporan::query();
 
-        if ($request->kegiatan) {
-            $query->where('kegiatan', $request->kegiatan);
+        if ($request->id_kegiatan) {
+            $query->where('id_kegiatan', $request->id_kegiatan);
         }
 
         $monthly = (clone $query)->select(
-            DB::raw('MONTH(created_at) as bulan'),
-            DB::raw("SUM(CASE WHEN status='menunggu' THEN 1 ELSE 0 END) as menunggu"),
-            DB::raw("SUM(CASE WHEN status='diterima' THEN 1 ELSE 0 END) as diterima"),
-            DB::raw("SUM(CASE WHEN status='ditolak' THEN 1 ELSE 0 END) as ditolak")
+            DB::raw('MONTH(tanggal_kegiatan) as bulan'),
+            DB::raw('COUNT(*) as total')
         )
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->get();
 
-        $dataMenunggu = array_fill(0, 12, 0);
-        $dataDiterima = array_fill(0, 12, 0);
-        $dataDitolak = array_fill(0, 12, 0);
+        $dataBulanan = array_fill(0, 12, 0);
 
         foreach ($monthly as $item) {
-            $index = $item->bulan - 1;
-            $dataMenunggu[$index] = $item->menunggu;
-            $dataDiterima[$index] = $item->diterima;
-            $dataDitolak[$index] = $item->ditolak;
+            $dataBulanan[$item->bulan - 1] = $item->total;
         }
 
         $kegiatanChart = (clone $query)
-            ->select('kegiatan', DB::raw('COUNT(*) as total'))
-            ->groupBy('kegiatan')
+            ->join('kegiatans', 'laporans.id_kegiatan', '=', 'kegiatans.id_kegiatan')
+            ->select('kegiatans.jenis_kegiatan', DB::raw('COUNT(*) as total'))
+            ->groupBy('kegiatans.jenis_kegiatan')
             ->get();
 
         return response()->json([
             'total' => (clone $query)->count(),
-            'menunggu' => (clone $query)->where('status', 'menunggu')->count(),
-            'diterima' => (clone $query)->where('status', 'diterima')->count(),
-            'ditolak' => (clone $query)->where('status', 'ditolak')->count(),
-            'latest' => (clone $query)->latest()->take(10)->get(),
-            'dataMenunggu' => $dataMenunggu,
-            'dataDiterima' => $dataDiterima,
-            'dataDitolak' => $dataDitolak,
-            'labelKegiatan' => $kegiatanChart->pluck('kegiatan'),
+            'latest' => (clone $query)->with(['dosen', 'kegiatan'])->latest()->take(10)->get(),
+            'dataBulanan' => $dataBulanan,
+            'labelKegiatan' => $kegiatanChart->pluck('jenis_kegiatan'),
             'dataKegiatan' => $kegiatanChart->pluck('total'),
         ]);
     }

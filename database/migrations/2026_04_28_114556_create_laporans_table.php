@@ -11,16 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporans', function (Blueprint $table) {
-    $table->id();
-    $table->string('nama_pelapor');
-    $table->string('email');
-    $table->string('kegiatan'); // seminar / sidang
-    $table->text('deskripsi');
-    $table->string('bukti')->nullable();
-    $table->enum('status', ['menunggu', 'diproses', 'selesai'])->default('menunggu');
-    $table->timestamps();
-});
+        //
     }
 
     /**
@@ -28,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporans');
+        //
     }
 };

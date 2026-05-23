@@ -49,11 +49,11 @@
 
             @csrf
 
-            <!-- EMAIL -->
+            <!-- USERNAME -->
             <div>
 
                 <label class="text-sm font-medium text-gray-500">
-                    Email
+                    Username / NIP
                 </label>
 
                 <div class="group mt-2 flex items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 transition focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
@@ -78,11 +78,11 @@
 
                     </span>
 
-                    <input type="email"
-                           name="email"
+                    <input type="text"
+                           name="username"
                            required
-                           value="{{ old('email') }}"
-                           placeholder="nama@instansi.go.id"
+                           value="{{ old('username') }}"
+                           placeholder="Masukkan username atau NIP"
                            class="w-full bg-transparent border-none outline-none focus:ring-0 text-sm">
 
                 </div>
@@ -185,7 +185,7 @@
                 </h3>
 
                 <p class="text-sm text-slate-500 mt-1">
-                    Email atau password yang Anda masukkan salah.
+                    Username atau password yang Anda masukkan salah.
                 </p>
 
             </div>

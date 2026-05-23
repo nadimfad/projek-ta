@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Dosen;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ class UserManagementController extends Controller
 {
     public function index(): View
     {
-        $users = User::where('role', 'dosen')->latest()->get();
+        $users = User::with('dosen')->where('role', 'dosen')->latest()->get();
 
         return view('admin.users.index', compact('users'));
     }
@@ -21,14 +22,20 @@ class UserManagementController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')],
+            'nama' => ['required', 'string', 'max:255'],
+            'nip' => ['required', 'string', 'max:50', Rule::unique('dosens', 'nip'), Rule::unique('users', 'username')],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('dosens', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        User::create([
-            'name' => $data['name'],
+        Dosen::create([
+            'nip' => $data['nip'],
+            'nama' => $data['nama'],
             'email' => $data['email'],
+        ]);
+
+        User::create([
+            'username' => $data['nip'],
             'password' => Hash::make($data['password']),
             'role' => 'dosen',
         ]);
@@ -36,33 +43,38 @@ class UserManagementController extends Controller
         return back()->with('success', 'Akun dosen berhasil dibuat.');
     }
 
-    // DETAIL USER
-    public function show(User $user): View
-    {
-        return view('admin.users.show', compact('user'));
-    }
-
-    // FORM EDIT
-    public function edit(User $user): View
-    {
-        return view('admin.users.edit', compact('user'));
-    }
-
     // UPDATE USER
     public function update(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'nama' => ['required', 'string', 'max:255'],
+            'nip' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('dosens', 'nip')->ignore($user->dosen?->id_dosen, 'id_dosen'),
+                Rule::unique('users', 'username')->ignore($user->id_user, 'id_user'),
+            ],
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users')->ignore($user->id),
+                Rule::unique('dosens', 'email')->ignore($user->dosen?->id_dosen, 'id_dosen'),
             ],
         ]);
 
+        $oldUsername = $user->username;
+
+        Dosen::updateOrCreate(
+            ['nip' => $oldUsername],
+            [
+                'nip' => $data['nip'],
+                'nama' => $data['nama'],
+                'email' => $data['email'],
+            ]
+        );
+
         $user->update([
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'username' => $data['nip'],
         ]);
 
         return redirect()
@@ -73,6 +85,7 @@ class UserManagementController extends Controller
     // HAPUS USER
     public function destroy(User $user): RedirectResponse
     {
+        Dosen::where('nip', $user->username)->delete();
         $user->delete();
 
         return back()->with('success', 'Akun dosen berhasil dihapus.');

@@ -2,149 +2,167 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BuktiLaporan;
+use App\Models\Dosen;
+use App\Models\Kegiatan;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
-    // =========================
-    // 🔥 INDEX + FILTER KEGIATAN
-    // =========================
     public function index(Request $request)
     {
-        $query = Laporan::query();
+        $query = Laporan::with(['dosen', 'kegiatan', 'buktiLaporans']);
 
-        // 🔥 FILTER KEGIATAN
-        if ($request->kegiatan) {
-            $query->where('kegiatan', $request->kegiatan);
+        if ($request->id_kegiatan) {
+            $query->where('id_kegiatan', $request->id_kegiatan);
         }
 
         if ($request->search) {
             $query->where(function ($subQuery) use ($request) {
-                $subQuery->where('nama_pelapor', 'like', '%'.$request->search.'%')
-                    ->orWhere('email', 'like', '%'.$request->search.'%')
-                    ->orWhere('kegiatan', 'like', '%'.$request->search.'%')
-                    ->orWhere('status', 'like', '%'.$request->search.'%');
+                $subQuery->where('nama_mahasiswa', 'like', '%'.$request->search.'%')
+                    ->orWhere('nim_mahasiswa', 'like', '%'.$request->search.'%')
+                    ->orWhere('bentuk_gratifikasi', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('dosen', function ($dosenQuery) use ($request) {
+                        $dosenQuery->where('nama', 'like', '%'.$request->search.'%')
+                            ->orWhere('nip', 'like', '%'.$request->search.'%')
+                            ->orWhere('email', 'like', '%'.$request->search.'%');
+                    })
+                    ->orWhereHas('kegiatan', function ($kegiatanQuery) use ($request) {
+                        $kegiatanQuery->where('jenis_kegiatan', 'like', '%'.$request->search.'%');
+                    });
             });
         }
 
-        // 🔐 ROLE CHECK
-        if (auth()->user()->role == 'admin') {
+        if (auth()->user()->role === 'admin') {
             $laporans = $query->latest()->get();
+            $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
-            return view('admin.laporan', compact('laporans'));
-        } else {
-            $laporans = $query
-                ->where('email', auth()->user()->email)
-                ->latest()
-                ->get();
+            return view('admin.laporan', compact('laporans', 'kegiatans'));
         }
 
-        return view('laporan.index', compact('laporans'));
+        $dosen = auth()->user()->dosen;
+
+        $laporans = $query
+            ->where('id_dosen', $dosen?->id_dosen)
+            ->latest()
+            ->get();
+        $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
+
+        return view('laporan.index', compact('laporans', 'kegiatans'));
     }
 
-    // =========================
-    // CREATE
-    // =========================
     public function create()
     {
-        return view('laporan.create');
+        $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
+
+        return view('laporan.create', compact('kegiatans'));
     }
 
-    // =========================
-    // STORE
-    // =========================
     public function store(Request $request)
     {
+        $dosen = auth()->user()->dosen;
+
+        abort_if(! $dosen, 403);
+
         $data = $request->validate([
-            'nama_pelapor' => 'required',
-            'kegiatan' => 'required',
-            'deskripsi' => 'required',
-            'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
+            'id_kegiatan' => ['required', 'exists:kegiatans,id_kegiatan'],
+            'nama_mahasiswa' => ['required', 'string', 'max:255'],
+            'nim_mahasiswa' => ['required', 'string', 'max:50'],
+            'bentuk_gratifikasi' => ['required', 'string', 'max:255'],
+            'tanggal_kegiatan' => ['nullable', 'date'],
+            'keterangan' => ['nullable', 'string'],
+            'fotos' => ['nullable', 'array'],
+            'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'foto_kamera' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
-        // 🔥 AUTO EMAIL LOGIN
-        $data['email'] = auth()->user()->email;
+        $data['id_dosen'] = $dosen->id_dosen;
+        $data['tanggal_kegiatan'] = $data['tanggal_kegiatan'] ?? now()->toDateString();
 
-        $data['status'] = 'menunggu';
+        $laporan = Laporan::create($data);
 
-        if ($request->hasFile('bukti')) {
-            $data['bukti'] = $request->file('bukti')->store('bukti', 'public');
+        $files = $request->file('fotos', []);
+
+        if ($request->hasFile('foto_kamera')) {
+            $files[] = $request->file('foto_kamera');
         }
 
-        Laporan::create($data);
+        if (count($files) === 0) {
+            BuktiLaporan::create([
+                'id_laporan' => $laporan->id_laporan,
+                'nama' => $dosen->nama,
+                'email' => $dosen->email,
+            ]);
+        }
+
+        foreach ($files as $file) {
+            BuktiLaporan::create([
+                'id_laporan' => $laporan->id_laporan,
+                'nama' => $dosen->nama,
+                'email' => $dosen->email,
+                'file_path' => $file->store('bukti-laporan', 'public'),
+            ]);
+        }
 
         return redirect('/laporan')->with('success', 'Data berhasil ditambahkan');
     }
 
-    // =========================
-    // UPDATE
-    // =========================
     public function update(Request $request, $id)
     {
         $laporan = Laporan::findOrFail($id);
 
-        // ✅ UPDATE STATUS (ADMIN CEPAT)
-        if ($request->has('status') && count($request->all()) <= 3) {
-            $laporan->update([
-                'status' => $request->status
-            ]);
-
-            return back()->with('success', 'Status berhasil diupdate');
-        }
-
-        // ✅ UPDATE FULL DATA
         $data = $request->validate([
-            'nama_pelapor' => 'required',
-            'kegiatan' => 'required',
-            'deskripsi' => 'required',
-            'status' => 'required',
-            'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
+            'id_kegiatan' => ['required', 'exists:kegiatans,id_kegiatan'],
+            'nama_mahasiswa' => ['required', 'string', 'max:255'],
+            'nim_mahasiswa' => ['required', 'string', 'max:50'],
+            'bentuk_gratifikasi' => ['required', 'string', 'max:255'],
+            'tanggal_kegiatan' => ['required', 'date'],
+            'keterangan' => ['nullable', 'string'],
         ]);
-
-        // 🔥 JAGA EMAIL
-        $data['email'] = auth()->user()->email;
-
-        // upload file baru
-        if ($request->hasFile('bukti')) {
-
-            if ($laporan->bukti) {
-                Storage::disk('public')->delete($laporan->bukti);
-            }
-
-            $data['bukti'] = $request->file('bukti')->store('bukti', 'public');
-        }
 
         $laporan->update($data);
 
-        return redirect('/laporan')->with('success', 'Data berhasil diupdate');
+        return back()->with('success', 'Data berhasil diupdate');
     }
 
-    // =========================
-    // DELETE
-    // =========================
     public function destroy($id)
     {
-        $laporan = Laporan::findOrFail($id);
+        $laporan = Laporan::with('buktiLaporans')->findOrFail($id);
 
-        if ($laporan->bukti) {
-            Storage::disk('public')->delete($laporan->bukti);
+        foreach ($laporan->buktiLaporans as $bukti) {
+            if ($bukti->file_path) {
+                Storage::disk('public')->delete($bukti->file_path);
+            }
         }
 
         $laporan->delete();
 
-        return redirect('/laporan')->with('success', 'Data berhasil dihapus');
+        return back()->with('success', 'Data berhasil dihapus');
     }
 
-    // =========================
-    // HISTORY
-    // =========================
-    public function history()
+    public function history(Request $request)
     {
-        $laporans = Laporan::where('email', auth()->user()->email)
-                            ->latest()
-                            ->get();
+        $dosen = auth()->user()->dosen;
+
+        abort_if(! $dosen, 403);
+
+        $query = Laporan::with(['kegiatan', 'buktiLaporans'])
+            ->where('id_dosen', $dosen->id_dosen);
+
+        if ($request->search) {
+            $query->where(function ($subQuery) use ($request) {
+                $subQuery->where('nama_mahasiswa', 'like', '%'.$request->search.'%')
+                    ->orWhere('nim_mahasiswa', 'like', '%'.$request->search.'%')
+                    ->orWhere('bentuk_gratifikasi', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('kegiatan', function ($kegiatanQuery) use ($request) {
+                        $kegiatanQuery->where('jenis_kegiatan', 'like', '%'.$request->search.'%');
+                    });
+            });
+        }
+
+        $laporans = $query->latest()->get();
 
         return view('laporan.history', compact('laporans'));
     }
