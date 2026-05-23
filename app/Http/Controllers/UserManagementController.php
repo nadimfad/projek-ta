@@ -35,4 +35,46 @@ class UserManagementController extends Controller
 
         return back()->with('success', 'Akun dosen berhasil dibuat.');
     }
+
+    // DETAIL USER
+    public function show(User $user): View
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
+    // FORM EDIT
+    public function edit(User $user): View
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    // UPDATE USER
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->ignore($user->id),
+            ],
+        ]);
+
+        $user->update([
+            'name' => $data['name'],
+            'email' => $data['email'],
+        ]);
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', 'Data dosen berhasil diupdate.');
+    }
+
+    // HAPUS USER
+    public function destroy(User $user): RedirectResponse
+    {
+        $user->delete();
+
+        return back()->with('success', 'Akun dosen berhasil dihapus.');
+    }
 }

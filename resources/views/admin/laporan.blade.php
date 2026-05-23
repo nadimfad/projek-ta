@@ -50,7 +50,26 @@
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-5 font-semibold text-gray-700">{{ $laporan->nama_pelapor }}</td>
                         <td class="px-6 py-5 text-gray-500">{{ $laporan->email }}</td>
-                        <td class="px-6 py-5 text-gray-500">{{ $laporan->kegiatan }}</td>
+                        <td class="px-6 py-5">
+    <span class="px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide
+
+        @if($laporan->kegiatan == 'Seminar Kerja Praktek')
+            bg-blue-100 text-blue-700
+
+        @elseif($laporan->kegiatan == 'Seminar Proposal')
+            bg-green-100 text-green-700
+
+        @elseif($laporan->kegiatan == 'Seminar Hasil/Sidang Tertutup')
+            bg-yellow-100 text-yellow-700
+
+        @elseif($laporan->kegiatan == 'Seminar Akhir/Sidang Terbuka')
+            bg-red-100 text-red-700
+
+        @endif
+    ">
+        {{ $laporan->kegiatan }}
+    </span>
+</td>
                         <td class="px-6 py-5">
                             <form action="{{ route('laporan.update', $laporan->id) }}" method="POST" class="mb-2">
                                 @csrf
