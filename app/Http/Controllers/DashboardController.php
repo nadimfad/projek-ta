@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $query = Laporan::with(['dosen', 'kegiatan']);
 
         if ($request->id_kegiatan) {
-            $query->where('id_kegiatan', $request->id_kegiatan);
+            $query->where('laporans.id_kegiatan', $request->id_kegiatan);
         }
 
         $laporanTerbaru = (clone $query)->latest()->take(10)->get();
@@ -30,7 +30,7 @@ class DashboardController extends Controller
         $query = Laporan::query();
 
         if ($request->id_kegiatan) {
-            $query->where('id_kegiatan', $request->id_kegiatan);
+            $query->where('laporans.id_kegiatan', $request->id_kegiatan);
         }
 
         $totalLaporan = (clone $query)->count();
@@ -77,7 +77,7 @@ class DashboardController extends Controller
         $query = Laporan::query();
 
         if ($request->id_kegiatan) {
-            $query->where('id_kegiatan', $request->id_kegiatan);
+            $query->where('laporans.id_kegiatan', $request->id_kegiatan);
         }
 
         $monthly = (clone $query)->select(

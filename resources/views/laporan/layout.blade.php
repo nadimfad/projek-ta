@@ -9,13 +9,18 @@
 </head>
 
 <body class="bg-slate-100 min-h-screen">
-<div class="flex min-h-screen">
-    <aside class="w-[260px] bg-white border-r border-gray-100 flex flex-col justify-between h-screen sticky top-0">
-        <div>
-            <div class="flex items-center gap-3 px-6 py-8">
-                <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
+<div class="flex min-h-screen flex-col md:flex-row">
+    <aside class="w-full md:w-[260px] bg-white border-b md:border-b-0 md:border-r border-gray-100 flex md:flex-col justify-between md:h-screen md:sticky top-0 z-30">
+        <div class="min-w-0">
+            <div class="flex justify-center px-4 sm:px-6 py-4 md:py-6">
+                <img
+                    src="/images/logo1.png"
+                    alt="Logo"
+                    class="h-14 md:h-16 w-auto max-w-[132px] object-contain"
+                />
+                {{-- <div class="w-11 h-11 md:w-14 md:h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7 text-white"
+                        class="w-6 h-6 md:w-7 md:h-7 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -24,16 +29,16 @@
                             stroke-width="2"
                             d="M12 3l7 4v5c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V7l7-4z"/>
                     </svg>
-                </div>
-
-                <h1 class="text-xl font-bold text-slate-800 tracking-tight">
+                </div> --}}
+{{-- 
+                <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">
                     SIGAP
-                </h1>
+                </h1> --}}
             </div>
 
-            <div class="px-4 mt-5 space-y-3">
+            <div class="px-4 pb-4 md:pb-0 md:mt-5 flex md:block gap-2 md:space-y-3 overflow-x-auto">
                 <a href="{{ route('laporan.index') }}"
-                   class="flex items-center gap-4 px-5 py-4 rounded-2xl transition {{ request()->routeIs('laporan.index') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
+                   class="flex shrink-0 items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-2xl transition {{ request()->routeIs('laporan.index') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                     </svg>
@@ -42,7 +47,7 @@
                 </a>
 
                 <a href="{{ route('laporan.history') }}"
-                   class="flex items-center gap-4 px-5 py-4 rounded-2xl transition {{ request()->routeIs('laporan.history') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
+                   class="flex shrink-0 items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-2xl transition {{ request()->routeIs('laporan.history') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-6 h-6"
                         fill="none"
@@ -59,12 +64,12 @@
             </div>
         </div>
 
-        <div class="p-6">
+        <div class="p-4 md:p-6">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
 
                 <button type="submit"
-                    class="flex items-center gap-3 text-red-500 font-semibold hover:opacity-80 transition">
+                    class="flex items-center gap-2 md:gap-3 text-red-500 font-semibold hover:opacity-80 transition">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-6 h-6"
                         fill="none"
@@ -76,13 +81,13 @@
                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V4"/>
                     </svg>
 
-                    Keluar
+                    <span class="hidden sm:inline">Keluar</span>
                 </button>
             </form>
         </div>
     </aside>
 
-    <main class="flex-1 p-10">
+    <main class="flex-1 p-4 sm:p-6 lg:p-10 min-w-0">
         @yield('content')
     </main>
 </div>

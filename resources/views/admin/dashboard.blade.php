@@ -32,27 +32,41 @@
 
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full min-w-[880px] text-sm text-center">
                 <thead class="bg-gray-50 text-gray-400 uppercase text-[11px] tracking-widest">
                     <tr>
-                        <th class="px-6 py-4 text-left font-semibold">Dosen</th>
-                        <th class="px-6 py-4 text-left font-semibold">Mahasiswa</th>
-                        <th class="px-6 py-4 text-left font-semibold">NIM</th>
-                        <th class="px-6 py-4 text-left font-semibold">Kegiatan</th>
-                        <th class="px-6 py-4 text-left font-semibold">Bentuk Gratifikasi</th>
-                        <th class="px-6 py-4 text-right font-semibold">Tanggal</th>
+                        <th class="px-6 py-4 text-center font-semibold">Dosen</th>
+                        <th class="px-6 py-4 text-center font-semibold">Mahasiswa</th>
+                        <th class="px-6 py-4 text-center font-semibold">NIM</th>
+                        <th class="px-6 py-4 text-center font-semibold">Kegiatan</th>
+                        <th class="px-6 py-4 text-center font-semibold">Bentuk Gratifikasi</th>
+                        <th class="px-6 py-4 text-center font-semibold">Tanggal</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-50">
                     @forelse ($laporanTerbaru as $laporan)
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-5 font-semibold text-gray-700">{{ $laporan->dosen?->nama ?? '-' }}</td>
-                        <td class="px-6 py-5 text-gray-500">{{ $laporan->nama_mahasiswa }}</td>
-                        <td class="px-6 py-5 text-gray-500">{{ $laporan->nim_mahasiswa }}</td>
-                        <td class="px-6 py-5 text-gray-500">{{ $laporan->kegiatan?->jenis_kegiatan ?? '-' }}</td>
-                        <td class="px-6 py-5 text-gray-500">{{ $laporan->bentuk_gratifikasi }}</td>
-                        <td class="px-6 py-5 text-right text-gray-400 font-medium">{{ $laporan->tanggal_kegiatan }}</td>
+                        <td class="px-6 py-5 font-semibold text-gray-700 align-middle">{{ $laporan->dosen?->nama ?? '-' }}</td>
+                        <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->nama_mahasiswa }}</td>
+                        <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->nim_mahasiswa }}</td>
+                        <td class="px-6 py-5">
+                            @php
+                                $jenisKegiatan = $laporan->kegiatan?->jenis_kegiatan;
+                                $warnaKegiatan = match ($jenisKegiatan) {
+                                    'Seminar Kerja Praktek' => 'bg-blue-100 text-blue-700',
+                                    'Seminar Proposal' => 'bg-green-100 text-green-700',
+                                    'Seminar Hasil/Sidang Tertutup' => 'bg-yellow-100 text-yellow-700',
+                                    'Seminar Akhir/Sidang Terbuka' => 'bg-red-100 text-red-700',
+                                    default => 'bg-gray-100 text-gray-600',
+                                };
+                            @endphp
+                            <span class="inline-flex justify-center px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide {{ $warnaKegiatan }}">
+                                {{ $jenisKegiatan ?? '-' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->bentuk_gratifikasi }}</td>
+                        <td class="px-6 py-5 text-gray-400 font-medium align-middle">{{ $laporan->tanggal_kegiatan }}</td>
                     </tr>
                     @empty
                     <tr>

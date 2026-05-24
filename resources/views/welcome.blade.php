@@ -2,6 +2,7 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sigap - Sistem Pelaporan</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -14,18 +15,18 @@
 
 <!-- ================= NAVBAR ================= -->
 <header class="bg-white/80 backdrop-blur-md fixed w-full z-50 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex justify-between items-center gap-4">
 
         <!-- LOGO -->
-        <div class="flex items-center gap-3 ml-4">
-            <img src="{{ asset('images/logo1.png') }}" class="h-16">
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('images/logo1.png') }}" class="h-12 sm:h-16">
             <span class="text-xl font-bold"></span>
         </div>
 
         <!-- MENU -->
-        <div class="flex items-center gap-8 text-sm font-medium">
-            <a href="#cara-lapor" class="hover:text-indigo-600 transition">Cara Lapor</a>
-            <a href="#faq" class="hover:text-indigo-600 transition">FAQ</a>
+        <div class="flex items-center justify-end gap-2 sm:gap-6 text-xs sm:text-sm font-medium">
+            <a href="#cara-lapor" class="hidden sm:inline hover:text-indigo-600 transition">Cara Lapor</a>
+            <a href="#faq" class="hidden sm:inline hover:text-indigo-600 transition">FAQ</a>
 
             @auth
 
@@ -38,8 +39,8 @@
 
     @else
 
-        <a href="{{ route('laporan') }}"
-           class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
+        <a href="{{ route('laporan.index') }}"
+           class="bg-indigo-600 text-white px-3 sm:px-5 py-2 rounded-full hover:bg-indigo-700 transition whitespace-nowrap">
             Laporkan Sekarang
         </a>
 
@@ -48,7 +49,7 @@
 @else
 
     <a href="{{ route('login') }}"
-       class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
+       class="bg-indigo-600 text-white px-3 sm:px-5 py-2 rounded-full hover:bg-indigo-700 transition whitespace-nowrap">
         Laporkan Sekarang
     </a>
 
@@ -59,7 +60,7 @@
 </header>
 
 <!-- ================= HERO ================= -->
-<section class="pt-32 pb-20 text-center px-6 mb-8">
+<section class="pt-28 sm:pt-32 pb-14 sm:pb-20 text-center px-4 sm:px-6 mb-8">
     <div class="max-w-4xl mx-auto">
 
         <div data-aos="zoom-in"
@@ -68,13 +69,13 @@
         </div>
 
         <h1 data-aos="fade-up"
-            class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
+            class="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight mb-6">
             Wujudkan Integritas <br>
             <span class="text-indigo-600">Tanpa Kompromi</span>
         </h1>
 
         <p data-aos="fade-up" data-aos-delay="100"
-           class="text-gray-500 text-lg mb-10">
+           class="text-gray-500 text-base sm:text-lg mb-10">
             Platform digital resmi untuk pelaporan gratifikasi.
             Cepat, aman, dan tanpa biaya.
         </p>
@@ -93,7 +94,7 @@
 
     @else
 
-        <a href="{{ route('laporan') }}"
+        <a href="{{ route('laporan.index') }}"
            class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 hover:bg-indigo-700 transition">
             Mulai Melapor →
         </a>
@@ -115,8 +116,8 @@
 </section>
 
 <!-- ================= CARA MELAPOR ================= -->
-<section id="cara-lapor" class="bg-white py-20 px-6">
-    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center" data-aos="fade-up">
+<section id="cara-lapor" class="bg-white py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-12 items-center" data-aos="fade-up">
 
         <!-- LEFT CONTENT -->
         <div>
@@ -125,7 +126,7 @@
                 CARA MELAPOR
             </p>
 
-            <h2 class="text-3xl md:text-4xl font-bold mb-10">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-10">
                 Proses Pelaporan yang <br>
                 Mudah & Cepat
             </h2>
@@ -223,10 +224,10 @@
 </section>
 
 <!-- ================= FAQ ================= -->
-<section id="faq" class="bg-gray-50 py-20 px-6 mb-4">
+<section id="faq" class="bg-gray-50 py-14 sm:py-20 px-4 sm:px-6 mb-4">
 
     <div class="max-w-4xl mx-auto text-center mb-12" data-aos="fade-up">
-        <h2 class="text-3xl font-bold mb-4">FAQ</h2>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4">FAQ</h2>
         <p class="text-gray-500">Pertanyaan umum seputar sistem</p>
     </div>
 
@@ -285,11 +286,11 @@
 </section>
 
 <!-- ================= HERO BANNER ================= -->
-<section class="pt-28 px-6 mb-10">
+<section class="pt-16 sm:pt-28 px-4 sm:px-6 mb-10">
 
     <div class="max-w-7xl mx-auto">
 
-        <div class="relative overflow-hidden rounded-[40px] bg-gradient-to-r from-indigo-800 to-indigo-600 px-10 py-20 text-center text-white">
+        <div class="relative overflow-hidden rounded-3xl sm:rounded-[40px] bg-gradient-to-r from-indigo-800 to-indigo-600 px-5 sm:px-10 py-14 sm:py-20 text-center text-white">
 
             <!-- BACKGROUND DOT PATTERN -->
             <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
@@ -297,7 +298,7 @@
             <!-- CONTENT -->
             <div class="relative z-10">
 
-                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-8">
+                <h1 class="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight mb-8">
                     Berani Jujur Adalah Langkah <br>
                     Emas Bagi Bangsa
                 </h1>

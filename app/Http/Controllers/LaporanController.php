@@ -75,7 +75,6 @@ class LaporanController extends Controller
             'keterangan' => ['nullable', 'string'],
             'fotos' => ['nullable', 'array'],
             'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-            'foto_kamera' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
         $data['id_dosen'] = $dosen->id_dosen;
@@ -84,10 +83,6 @@ class LaporanController extends Controller
         $laporan = Laporan::create($data);
 
         $files = $request->file('fotos', []);
-
-        if ($request->hasFile('foto_kamera')) {
-            $files[] = $request->file('foto_kamera');
-        }
 
         if (count($files) === 0) {
             BuktiLaporan::create([
