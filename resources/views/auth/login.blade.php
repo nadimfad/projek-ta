@@ -53,7 +53,7 @@
             <div>
 
                 <label class="text-sm font-medium text-gray-500">
-                    Username / NIP
+                    NIP / Email
                 </label>
 
                 <div class="group mt-2 flex items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 transition focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
@@ -82,7 +82,7 @@
                            name="username"
                            required
                            value="{{ old('username') }}"
-                           placeholder="Masukkan username atau NIP"
+                           placeholder="Masukkan NIP, atau email"
                            class="w-full bg-transparent border-none outline-none focus:ring-0 text-sm">
 
                 </div>

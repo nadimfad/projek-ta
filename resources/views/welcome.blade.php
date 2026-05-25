@@ -26,6 +26,7 @@
         <!-- MENU -->
         <div class="flex items-center justify-end gap-2 sm:gap-6 text-xs sm:text-sm font-medium">
             <a href="#cara-lapor" class="hidden sm:inline hover:text-indigo-600 transition">Cara Lapor</a>
+            <a href="#fitur" class="hidden sm:inline hover:text-indigo-600 transition">Fitur</a>
             <a href="#faq" class="hidden sm:inline hover:text-indigo-600 transition">FAQ</a>
 
             @auth
@@ -63,10 +64,10 @@
 <section class="pt-28 sm:pt-32 pb-14 sm:pb-20 text-center px-4 sm:px-6 mb-8">
     <div class="max-w-4xl mx-auto">
 
-        <div data-aos="zoom-in"
+        {{-- <div data-aos="zoom-in"
              class="inline-block px-4 py-2 text-sm font-bold bg-indigo-100 text-indigo-600 rounded-full mb-6">
             KEAMANAN DATA TERJAMIN 100%
-        </div>
+        </div> --}}
 
         <h1 data-aos="fade-up"
             class="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight mb-6">
@@ -218,6 +219,144 @@
 
             </div>
 
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= FITUR UTAMA ================= -->
+<section id="fitur" class="bg-gray-50 py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto">
+
+        <div class="max-w-4xl mx-auto text-center mb-12" data-aos="fade-up">
+            <p class="text-indigo-600 font-bold mb-3 tracking-wide">
+                FITUR SIGAP
+            </p>
+
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                Informasi Laporan Lebih Rapi
+            </h2>
+
+            <p class="text-gray-500">
+                SIGAP membantu proses pelaporan gratifikasi menjadi lebih terstruktur, mudah ditinjau, dan terdokumentasi.
+            </p>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="bg-white rounded-xl shadow p-6 transition hover:shadow-lg" data-aos="fade-up">
+                <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Laporan Terbaru</h3>
+                <p class="text-gray-500 text-sm leading-6">
+                    Dashboard menampilkan laporan terbaru agar aktivitas terakhir mudah dipantau.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6 transition hover:shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Riwayat Lengkap</h3>
+                <p class="text-gray-500 text-sm leading-6">
+                    Laporan lama tetap tersimpan dan bisa dicari kembali melalui halaman riwayat.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6 transition hover:shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-12 h-12 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h3l2-3h8l2 3h3v13H3V7zm9 10a4 4 0 100-8 4 4 0 000 8z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Bukti Foto</h3>
+                <p class="text-gray-500 text-sm leading-6">
+                    Bukti pendukung dapat diunggah dan direview langsung tanpa berpindah halaman.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6 transition hover:shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3h2v18h-2V3zM4 13h2v8H4v-8zm14-6h2v14h-2V7z"/>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Statistik Admin</h3>
+                <p class="text-gray-500 text-sm leading-6">
+                    Admin dapat melihat ringkasan data untuk membantu pemantauan laporan.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= INFORMASI LAPORAN ================= -->
+<section class="bg-white py-14 sm:py-20 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+
+        <div data-aos="fade-up">
+            <p class="text-indigo-600 font-bold mb-3 tracking-wide">
+                DATA YANG DICATAT
+            </p>
+
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+                Setiap Laporan Memuat Informasi Penting
+            </h2>
+
+            <p class="text-gray-500 leading-7 mb-8">
+                Form laporan dirancang ringkas, namun tetap memuat data utama yang dibutuhkan untuk proses peninjauan.
+            </p>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="font-semibold text-gray-800">Data Mahasiswa</h3>
+                    <p class="text-sm text-gray-500 mt-1">Nama dan NIM mahasiswa terkait.</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="font-semibold text-gray-800">Jenis Kegiatan</h3>
+                    <p class="text-sm text-gray-500 mt-1">Kategori seminar atau kegiatan akademik.</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="font-semibold text-gray-800">Bentuk Gratifikasi</h3>
+                    <p class="text-sm text-gray-500 mt-1">Jenis atau bentuk pemberian yang dilaporkan.</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h3 class="font-semibold text-gray-800">Keterangan & Bukti</h3>
+                    <p class="text-sm text-gray-500 mt-1">Catatan tambahan dan foto pendukung.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-3xl p-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="grid gap-4">
+                <div class="flex items-center justify-between bg-white rounded-xl shadow-sm p-4">
+                    <span class="font-semibold text-gray-700">Seminar Kerja Praktek</span>
+                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-bold">Biru</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-white rounded-xl shadow-sm p-4">
+                    <span class="font-semibold text-gray-700">Seminar Proposal</span>
+                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-600 text-xs font-bold">Hijau</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-white rounded-xl shadow-sm p-4">
+                    <span class="font-semibold text-gray-700">Seminar Hasil</span>
+                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold">Kuning</span>
+                </div>
+
+                <div class="flex items-center justify-between bg-white rounded-xl shadow-sm p-4">
+                    <span class="font-semibold text-gray-700">Seminar Akhir</span>
+                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-bold">Merah</span>
+                </div>
+            </div>
         </div>
 
     </div>

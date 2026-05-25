@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Laporan::with(['dosen', 'kegiatan']);
+        $query = Laporan::with(['dosen', 'kegiatan', 'buktiLaporans']);
 
         if ($request->id_kegiatan) {
             $query->where('laporans.id_kegiatan', $request->id_kegiatan);

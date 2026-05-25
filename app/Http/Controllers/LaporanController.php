@@ -13,7 +13,11 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Laporan::with(['dosen', 'kegiatan', 'buktiLaporans']);
+        $query = Laporan::with([
+            'kegiatan',
+            'buktiLaporans',
+            'dosen' => fn ($dosenQuery) => $dosenQuery->withCount('laporans'),
+        ]);
 
         if ($request->id_kegiatan) {
             $query->where('id_kegiatan', $request->id_kegiatan);
@@ -36,7 +40,18 @@ class LaporanController extends Controller
         }
 
         if (auth()->user()->role === 'admin') {
-            $laporans = $query->latest()->get();
+            if ($request->sort == 'dosen_terbanyak') {
+                $query->orderByRaw('(select count(*) from laporans as dosen_laporans where dosen_laporans.id_dosen = laporans.id_dosen) desc');
+            }
+
+            if ($request->sort == 'dosen_terdikit') {
+                $query->orderByRaw('(select count(*) from laporans as dosen_laporans where dosen_laporans.id_dosen = laporans.id_dosen) asc');
+            }
+
+            $laporans = $query
+                ->latest()
+                ->paginate(20)
+                ->withQueryString();
             $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
             return view('admin.laporan', compact('laporans', 'kegiatans'));
@@ -44,9 +59,13 @@ class LaporanController extends Controller
 
         $dosen = auth()->user()->dosen;
 
-        $laporans = $query
+        $laporans = Laporan::with([
+            'kegiatan',
+            'buktiLaporans',
+        ])
             ->where('id_dosen', $dosen?->id_dosen)
             ->latest()
+            ->limit(10)
             ->get();
         $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
@@ -146,6 +165,10 @@ class LaporanController extends Controller
         $query = Laporan::with(['kegiatan', 'buktiLaporans'])
             ->where('id_dosen', $dosen->id_dosen);
 
+        if ($request->id_kegiatan) {
+            $query->where('id_kegiatan', $request->id_kegiatan);
+        }
+
         if ($request->search) {
             $query->where(function ($subQuery) use ($request) {
                 $subQuery->where('nama_mahasiswa', 'like', '%'.$request->search.'%')
@@ -157,8 +180,12 @@ class LaporanController extends Controller
             });
         }
 
-        $laporans = $query->latest()->get();
+        $laporans = $query
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+        $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
-        return view('laporan.history', compact('laporans'));
+        return view('laporan.history', compact('laporans', 'kegiatans'));
     }
 }

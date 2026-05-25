@@ -14,7 +14,7 @@
 <div class="flex h-screen">
 
     <!-- 🔥 SIDEBAR MODERN -->
-  <aside class="w-64 bg-white h-screen flex flex-col border-r border-gray-100 shadow-sm">
+  <aside id="adminSidebar" class="w-64 bg-white h-screen flex flex-col border-r border-gray-100 shadow-sm transition-all duration-300 ease-in-out overflow-hidden">
 
     <div class="px-6 py-6 flex justify-center">
         {{-- <div class="bg-blue-600 p-2 rounded-lg shadow-md shadow-blue-200">
@@ -98,13 +98,51 @@
 
     <header class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
 
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800 tracking-tight">
-                @yield('title', 'Pusat Kendali Laporan')
-            </h1>
-            <p class="text-sm text-gray-400 mt-1">
-                {{ auth()->user()->role == 'admin' ? 'Selamat bertugas, Administrator.' : 'Pantau dan kelola laporan Anda.' }}
-            </p>
+        <div class="flex items-center gap-4">
+            <button type="button"
+        id="adminSidebarToggle"
+        onclick="toggleAdminSidebar()"
+        class="group inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300"
+        title="Toggle sidebar"
+        aria-label="Toggle sidebar"
+        aria-expanded="true">
+        
+    <svg xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 16 16" 
+         width="20" 
+         height="20" 
+         fill="currentColor"
+         aria-hidden="true" 
+         data-rtl-flip 
+         id="adminSidebarToggleIcon"
+         class="icon max-md:hidden transition-transform duration-300 ease-out"
+         style="vertical-align: text-bottom;">
+        <path d="M6.823 7.823a.25.25 0 0 1 0 .354l-2.396 2.396A.25.25 0 0 1 4 10.396V5.604a.25.25 0 0 1 .427-.177Z"></path>
+        <path d="M1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25V1.75C0 .784.784 0 1.75 0ZM1.5 1.75v12.5c0 .138.112.25.25.25H9.5v-13H1.75a.25.25 0 0 0-.25.25ZM11 14.5h3.25a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25H11Z"></path>
+    </svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="20"
+         height="20"
+         aria-hidden="true"
+         data-rtl-flip
+         id="adminSidebarToggleIconMobile"
+         class="icon md:hidden transition-transform duration-300 ease-out"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16M4 12h16M4 19h16" />
+    </svg>
+</button>
+
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 tracking-tight">
+                    @yield('title', 'Pusat Kendali Laporan')
+                </h1>
+                <p class="text-sm text-gray-400 mt-1">
+                    {{ auth()->user()->role == 'admin' ? 'Selamat bertugas, Administrator.' : 'Pantau dan kelola laporan Anda.' }}
+                </p>
+            </div>
         </div>
 
         <div class="flex items-center gap-2 text-sm font-medium text-gray-500 bg-gray-50 px-4 py-2 rounded-lg">
@@ -125,6 +163,48 @@
 
 <script>
     feather.replace()
+
+    const adminSidebar = document.getElementById('adminSidebar');
+    const adminSidebarToggle = document.getElementById('adminSidebarToggle');
+    const adminSidebarToggleIcon = document.getElementById('adminSidebarToggleIcon');
+    const adminSidebarToggleIconMobile = document.getElementById('adminSidebarToggleIconMobile');
+
+    function setToggleIcon(isHidden) {
+        adminSidebarToggle.setAttribute('aria-expanded', String(!isHidden));
+        adminSidebarToggle.classList.toggle('text-blue-600', !isHidden);
+        adminSidebarToggle.classList.toggle('bg-blue-50', !isHidden);
+        adminSidebarToggle.classList.toggle('text-gray-500', isHidden);
+        adminSidebarToggle.classList.toggle('bg-gray-50', isHidden);
+        adminSidebarToggle.classList.toggle('scale-95', isHidden);
+        adminSidebarToggle.setAttribute('title', isHidden ? 'Buka sidebar' : 'Tutup sidebar');
+
+        adminSidebarToggleIcon.classList.toggle('rotate-180', isHidden);
+        adminSidebarToggleIcon.classList.toggle('scale-90', isHidden);
+        adminSidebarToggleIcon.classList.toggle('opacity-80', isHidden);
+
+        adminSidebarToggleIconMobile.classList.toggle('rotate-180', isHidden);
+        adminSidebarToggleIconMobile.classList.toggle('scale-90', isHidden);
+        adminSidebarToggleIconMobile.classList.toggle('opacity-80', isHidden);
+    }
+
+    if (localStorage.getItem('adminSidebarHidden') === '1') {
+        adminSidebar.classList.add('w-0', 'border-r-0');
+        adminSidebar.classList.remove('w-64');
+        setToggleIcon(true);
+    } else {
+        setToggleIcon(false);
+    }
+
+    function toggleAdminSidebar() {
+        const isHidden = adminSidebar.classList.contains('w-0');
+
+        adminSidebar.classList.toggle('w-0', !isHidden);
+        adminSidebar.classList.toggle('border-r-0', !isHidden);
+        adminSidebar.classList.toggle('w-64', isHidden);
+        setToggleIcon(!isHidden);
+
+        localStorage.setItem('adminSidebarHidden', isHidden ? '0' : '1');
+    }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

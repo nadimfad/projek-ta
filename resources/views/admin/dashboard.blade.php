@@ -40,6 +40,7 @@
                         <th class="px-6 py-4 text-center font-semibold">NIM</th>
                         <th class="px-6 py-4 text-center font-semibold">Kegiatan</th>
                         <th class="px-6 py-4 text-center font-semibold">Bentuk Gratifikasi</th>
+                        <th class="px-6 py-4 text-center font-semibold">Foto</th>
                         <th class="px-6 py-4 text-center font-semibold">Tanggal</th>
                     </tr>
                 </thead>
@@ -66,11 +67,24 @@
                             </span>
                         </td>
                         <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->bentuk_gratifikasi }}</td>
+                        <td class="px-6 py-5 align-middle">
+                            <div class="flex justify-center gap-2">
+                                @forelse($laporan->buktiLaporans->whereNotNull('file_path')->take(3) as $bukti)
+                                    <button type="button"
+                                        onclick="openPhotoModal('{{ asset('storage/'.$bukti->file_path) }}')"
+                                        class="h-10 w-10 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 hover:ring-2 hover:ring-blue-400 transition">
+                                        <img src="{{ asset('storage/'.$bukti->file_path) }}" alt="Foto gratifikasi" class="h-full w-full object-cover">
+                                    </button>
+                                @empty
+                                    <span class="text-gray-300">-</span>
+                                @endforelse
+                            </div>
+                        </td>
                         <td class="px-6 py-5 text-gray-400 font-medium align-middle">{{ $laporan->tanggal_kegiatan }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-12 text-gray-400">Belum ada laporan.</td>
+                        <td colspan="7" class="text-center py-12 text-gray-400">Belum ada laporan.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -78,4 +92,42 @@
         </div>
     </div>
 </div>
+
+<div id="photoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
+    <div class="relative max-h-[90vh] w-full max-w-4xl">
+        <button type="button" onclick="closePhotoModal()" class="absolute -top-10 right-0 rounded-lg bg-white/90 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-white">
+            Tutup
+        </button>
+        <img id="photoModalImage" src="" alt="Preview foto gratifikasi" class="max-h-[90vh] w-full rounded-2xl object-contain bg-white shadow-2xl">
+    </div>
+</div>
+
+<script>
+    const photoModal = document.getElementById('photoModal');
+    const photoModalImage = document.getElementById('photoModalImage');
+
+    function openPhotoModal(src) {
+        photoModalImage.src = src;
+        photoModal.classList.remove('hidden');
+        photoModal.classList.add('flex');
+    }
+
+    function closePhotoModal() {
+        photoModal.classList.add('hidden');
+        photoModal.classList.remove('flex');
+        photoModalImage.src = '';
+    }
+
+    photoModal.addEventListener('click', function (event) {
+        if (event.target === photoModal) {
+            closePhotoModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !photoModal.classList.contains('hidden')) {
+            closePhotoModal();
+        }
+    });
+</script>
 @endsection
