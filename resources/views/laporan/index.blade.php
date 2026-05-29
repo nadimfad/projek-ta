@@ -11,9 +11,9 @@
         </div>
 
         <div>
-            <a href="{{ route('laporan.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
+            <button type="button" onclick="openCreateReportModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">
                 Tambah Laporan
-            </a>
+            </button>
         </div>
     </div>
 
@@ -79,6 +79,122 @@
     </div>
 </div>
 
+<div id="createReportModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
+    <div class="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+        <div class="sticky top-0 z-10 border-b border-slate-100 bg-white px-6 py-5">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Tambah Laporan</h3>
+                    <p class="mt-1 text-sm text-slate-400">Lengkapi laporan melalui 3 tahapan berikut.</p>
+                </div>
+
+                <button type="button" onclick="closeCreateReportModal()" class="rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">
+                    Tutup
+                </button>
+            </div>
+
+            <div class="mt-5 grid grid-cols-3 gap-3 text-center text-xs font-bold text-slate-400">
+                <div id="stepIndicator1" class="rounded-full bg-blue-600 px-3 py-2 text-white">1. Identitas</div>
+                <div id="stepIndicator2" class="rounded-full bg-slate-100 px-3 py-2">2. Kegiatan</div>
+                <div id="stepIndicator3" class="rounded-full bg-slate-100 px-3 py-2">3. Bukti</div>
+            </div>
+        </div>
+
+        <form id="createReportForm" action="{{ route('laporan.store') }}" method="POST" enctype="multipart/form-data" class="p-6">
+            @csrf
+
+            <div id="reportStep1" class="report-step space-y-6">
+                <div class="grid gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Nama Dosen</label>
+                        <input type="text" value="{{ auth()->user()->dosen?->nama }}" readonly class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Email Dosen</label>
+                        <input type="email" value="{{ auth()->user()->dosen?->email }}" readonly class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Nama Mahasiswa</label>
+                        <input type="text" name="nama_mahasiswa" value="{{ old('nama_mahasiswa') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        @error('nama_mahasiswa') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">NIM Mahasiswa</label>
+                        <input type="text" name="nim_mahasiswa" value="{{ old('nim_mahasiswa') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        @error('nim_mahasiswa') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportStep2" class="report-step hidden space-y-6">
+                <div>
+                    <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Jenis Kegiatan</label>
+                    <select name="id_kegiatan" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Pilih jenis kegiatan</option>
+                        @foreach($kegiatans as $kegiatan)
+                            <option value="{{ $kegiatan->id_kegiatan }}" {{ old('id_kegiatan') == $kegiatan->id_kegiatan ? 'selected' : '' }}>
+                                {{ $kegiatan->jenis_kegiatan }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('id_kegiatan') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="grid gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Bentuk Gratifikasi</label>
+                        <input type="text" name="bentuk_gratifikasi" value="{{ old('bentuk_gratifikasi') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        @error('bentuk_gratifikasi') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Tanggal Kegiatan</label>
+                        <input type="date" name="tanggal_kegiatan" value="{{ old('tanggal_kegiatan', now()->toDateString()) }}" readonly class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
+                        @error('tanggal_kegiatan') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportStep3" class="report-step hidden space-y-6">
+                <div>
+                    <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Upload Foto</label>
+                    <input type="file" name="fotos[]" accept="image/*" capture="environment" multiple required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="mt-2 text-xs text-slate-400">Bisa memilih beberapa foto atau membuka kamera langsung pada perangkat yang mendukung.</p>
+                    @error('fotos') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    @error('fotos.*') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Keterangan</label>
+                    <textarea name="keterangan" rows="5" required class="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">{{ old('keterangan') }}</textarea>
+                    @error('keterangan') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:justify-between">
+                <button type="button" id="prevReportStepButton" onclick="prevReportStep()" class="hidden rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                    Sebelumnya
+                </button>
+
+                <div class="flex justify-end gap-3 sm:ml-auto">
+                    <button type="button" onclick="closeCreateReportModal()" class="rounded-2xl bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">
+                        Batal
+                    </button>
+                    <button type="button" id="nextReportStepButton" onclick="nextReportStep()" class="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+                        Selanjutnya
+                    </button>
+                    <button type="submit" id="submitReportButton" class="hidden rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+                        Simpan Laporan
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="photoModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/70 p-4">
     <div class="relative max-h-[90vh] w-full max-w-4xl">
         <button type="button" onclick="closePhotoModal()" class="absolute -top-10 right-0 rounded-lg bg-white/90 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-white">
@@ -91,6 +207,78 @@
 <script>
     const photoModal = document.getElementById('photoModal');
     const photoModalImage = document.getElementById('photoModalImage');
+    const createReportModal = document.getElementById('createReportModal');
+    const createReportForm = document.getElementById('createReportForm');
+    const reportSteps = [
+        document.getElementById('reportStep1'),
+        document.getElementById('reportStep2'),
+        document.getElementById('reportStep3'),
+    ];
+    const stepIndicators = [
+        document.getElementById('stepIndicator1'),
+        document.getElementById('stepIndicator2'),
+        document.getElementById('stepIndicator3'),
+    ];
+    const prevReportStepButton = document.getElementById('prevReportStepButton');
+    const nextReportStepButton = document.getElementById('nextReportStepButton');
+    const submitReportButton = document.getElementById('submitReportButton');
+    let currentReportStep = 1;
+
+    function openCreateReportModal(step = 1) {
+        createReportModal.classList.remove('hidden');
+        createReportModal.classList.add('flex');
+        showReportStep(step);
+    }
+
+    function closeCreateReportModal() {
+        createReportModal.classList.add('hidden');
+        createReportModal.classList.remove('flex');
+    }
+
+    function showReportStep(step) {
+        currentReportStep = step;
+
+        reportSteps.forEach((element, index) => {
+            element.classList.toggle('hidden', index + 1 !== step);
+        });
+
+        stepIndicators.forEach((element, index) => {
+            const isActive = index + 1 === step;
+            element.classList.toggle('bg-blue-600', isActive);
+            element.classList.toggle('text-white', isActive);
+            element.classList.toggle('bg-slate-100', !isActive);
+            element.classList.toggle('text-slate-400', !isActive);
+        });
+
+        prevReportStepButton.classList.toggle('hidden', step === 1);
+        nextReportStepButton.classList.toggle('hidden', step === 3);
+        submitReportButton.classList.toggle('hidden', step !== 3);
+    }
+
+    function validateCurrentReportStep() {
+        const fields = reportSteps[currentReportStep - 1].querySelectorAll('input, select, textarea');
+
+        for (const field of fields) {
+            if (!field.checkValidity()) {
+                field.reportValidity();
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function nextReportStep() {
+        if (currentReportStep < 3 && validateCurrentReportStep()) {
+            showReportStep(currentReportStep + 1);
+        }
+    }
+
+    function prevReportStep() {
+        if (currentReportStep > 1) {
+            showReportStep(currentReportStep - 1);
+        }
+    }
 
     function openPhotoModal(src) {
         photoModalImage.src = src;
@@ -110,10 +298,30 @@
         }
     });
 
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && !photoModal.classList.contains('hidden')) {
-            closePhotoModal();
+    createReportModal.addEventListener('click', function (event) {
+        if (event.target === createReportModal) {
+            closeCreateReportModal();
         }
     });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            if (!photoModal.classList.contains('hidden')) {
+                closePhotoModal();
+            }
+
+            if (!createReportModal.classList.contains('hidden')) {
+                closeCreateReportModal();
+            }
+        }
+    });
+
+    @if ($errors->has('id_kegiatan') || $errors->has('bentuk_gratifikasi') || $errors->has('tanggal_kegiatan'))
+        openCreateReportModal(2);
+    @elseif ($errors->has('fotos') || $errors->has('fotos.*') || $errors->has('keterangan'))
+        openCreateReportModal(3);
+    @elseif ($errors->any())
+        openCreateReportModal(1);
+    @endif
 </script>
 @endsection

@@ -376,14 +376,14 @@
     <div class="group bg-white rounded-xl shadow p-5 cursor-pointer transition hover:shadow-lg">
 
         <div class="flex justify-between items-center">
-            <h3 class="font-semibold">Apakah laporan saya aman?</h3>
+            <h3 class="font-semibold">Apa itu gratifikasi?</h3>
             <span class="transition group-hover:rotate-45 text-xl">+</span>
         </div>
 
         <p class="mt-3 text-gray-500 max-h-0 overflow-hidden opacity-0 
                   group-hover:max-h-40 group-hover:opacity-100 
                   transition-all duration-500">
-            Ya, sistem kami menjamin keamanan data dan kerahasiaan pelapor.
+            Gratifikasi adalah pemberian dalam arti luas yang meliputi pemberian uang, barang diskon, komisi dan fasilitas lainnya.
         </p>
 
     </div>
@@ -392,14 +392,14 @@
     <div class="group bg-white rounded-xl shadow p-5 cursor-pointer transition hover:shadow-lg">
 
         <div class="flex justify-between items-center">
-            <h3 class="font-semibold">Apakah bisa melapor secara anonim?</h3>
+            <h3 class="font-semibold">Siapa yang dapat menggunakan sistem pelaporan gratifikasi ini?</h3>
             <span class="transition group-hover:rotate-45 text-xl">+</span>
         </div>
 
         <p class="mt-3 text-gray-500 max-h-0 overflow-hidden opacity-0 
                   group-hover:max-h-40 group-hover:opacity-100 
                   transition-all duration-500">
-            Bisa, Anda dapat memilih untuk tidak menampilkan identitas.
+            Sistem ini diperuntukan bagi dosen di lingkungan kampus yang ingin melaporkan penerimaan gratifikasi sebagai bentuk transparansi dan kepatuhan prinsip integritas.
         </p>
 
     </div>
@@ -408,14 +408,16 @@
     <div class="group bg-white rounded-xl shadow p-5 cursor-pointer transition hover:shadow-lg">
 
         <div class="flex justify-between items-center">
-            <h3 class="font-semibold">Berapa lama proses verifikasi?</h3>
+            <h3 class="font-semibold">Apa tujuan dari sistem pelaporan gratifikasi?</h3>
             <span class="transition group-hover:rotate-45 text-xl">+</span>
         </div>
 
         <p class="mt-3 text-gray-500 max-h-0 overflow-hidden opacity-0 
                   group-hover:max-h-40 group-hover:opacity-100 
                   transition-all duration-500">
-            Maksimal 3–7 hari kerja tergantung kelengkapan data.
+            Sistem ini bertujuan untuk memudahkan dosen dalam mencatat dan melaporkan penerimaan gratifikasi
+            secara elektronik sehingga tercipta lingkungan akademik yang transparan, akuntabel, dan bebas
+            dari konflik kepentingan.
         </p>
 
     </div>

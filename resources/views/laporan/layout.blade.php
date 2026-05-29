@@ -92,6 +92,44 @@
     </main>
 </div>
 
+@if(session('success'))
+<div id="successPopup"
+     class="fixed top-6 right-6 z-[9999] translate-x-[120%] opacity-0 transition-all duration-500">
+    <div class="flex min-w-[320px] items-start gap-4 rounded-2xl border border-white/30 bg-white/90 px-5 py-4 shadow-2xl backdrop-blur-xl">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+
+        <div class="flex-1">
+            <h3 class="text-sm font-semibold text-gray-800">Berhasil</h3>
+            <p class="mt-1 text-sm text-gray-500">{{ session('success') }}</p>
+        </div>
+
+        <button type="button" onclick="closeSuccessPopup()" class="text-gray-400 transition hover:text-gray-600">
+            x
+        </button>
+    </div>
+</div>
+
+<script>
+    const successPopup = document.getElementById('successPopup');
+
+    setTimeout(() => {
+        successPopup.classList.remove('translate-x-[120%]', 'opacity-0');
+    }, 100);
+
+    setTimeout(() => {
+        closeSuccessPopup();
+    }, 3500);
+
+    function closeSuccessPopup() {
+        successPopup.classList.add('translate-x-[120%]', 'opacity-0');
+    }
+</script>
+@endif
+
 @yield('scripts')
 </body>
 </html>

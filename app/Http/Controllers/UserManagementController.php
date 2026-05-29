@@ -22,10 +22,14 @@ class UserManagementController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
+            'nama' => ['required', 'string', 'max:255', Rule::unique('dosens', 'nama')],
             'nip' => ['required', 'string', 'max:50', Rule::unique('dosens', 'nip'), Rule::unique('users', 'username')],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('dosens', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'nama.unique' => 'Nama dosen sudah terdaftar.',
+            'nip.unique' => 'NIP dosen sudah terdaftar.',
+            'email.unique' => 'Email dosen sudah terdaftar.',
         ]);
 
         Dosen::create([
@@ -47,7 +51,12 @@ class UserManagementController extends Controller
     public function update(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
+            'nama' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('dosens', 'nama')->ignore($user->dosen?->id_dosen, 'id_dosen'),
+            ],
             'nip' => [
                 'required',
                 'string',
@@ -60,6 +69,10 @@ class UserManagementController extends Controller
                 'email',
                 Rule::unique('dosens', 'email')->ignore($user->dosen?->id_dosen, 'id_dosen'),
             ],
+        ], [
+            'nama.unique' => 'Nama dosen sudah terdaftar.',
+            'nip.unique' => 'NIP dosen sudah terdaftar.',
+            'email.unique' => 'Email dosen sudah terdaftar.',
         ]);
 
         $oldUsername = $user->username;

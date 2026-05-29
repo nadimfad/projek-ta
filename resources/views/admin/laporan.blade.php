@@ -22,12 +22,6 @@
                 @endforeach
             </select>
 
-            <select name="sort" class="border-gray-200 rounded-lg shadow-sm text-sm">
-                <option value="">Urutkan Dosen</option>
-                <option value="dosen_terbanyak" {{ request('sort') == 'dosen_terbanyak' ? 'selected' : '' }}>Penerima Terbanyak</option>
-                <option value="dosen_terdikit" {{ request('sort') == 'dosen_terdikit' ? 'selected' : '' }}>Penerima Terdikit</option>
-            </select>
-
             <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Filter</button>
         </form>
     </div>
@@ -37,14 +31,13 @@
             <table class="w-full table-fixed text-xs text-center xl:text-sm">
                 <thead class="bg-gray-50 text-gray-400 uppercase text-[11px] tracking-widest">
                     <tr>
-                        <th class="w-[17%] px-2 py-4 text-center font-semibold">Dosen</th>
-                        <th class="w-[7%] px-2 py-4 text-center font-semibold">Total</th>
-                        <th class="w-[15%] px-2 py-4 text-center font-semibold">Mahasiswa</th>
+                        <th class="w-[20%] px-2 py-4 text-center font-semibold">Dosen</th>
+                        <th class="w-[16%] px-2 py-4 text-center font-semibold">Mahasiswa</th>
                         <th class="w-[10%] px-2 py-4 text-center font-semibold">NIM</th>
-                        <th class="w-[20%] px-2 py-4 text-center font-semibold">Kegiatan</th>
-                        <th class="w-[14%] px-2 py-4 text-center font-semibold">Bentuk</th>
-                        <th class="w-[9%] px-2 py-4 text-center font-semibold">Tanggal</th>
-                        <th class="w-[8%] px-2 py-4 text-center font-semibold">Detail</th>
+                        <th class="w-[22%] px-2 py-4 text-center font-semibold">Kegiatan</th>
+                        <th class="w-[15%] px-2 py-4 text-center font-semibold">Bentuk</th>
+                        <th class="w-[10%] px-2 py-4 text-center font-semibold">Tanggal</th>
+                        <th class="w-[7%] px-2 py-4 text-center font-semibold">Detail</th>
                     </tr>
                 </thead>
 
@@ -54,7 +47,6 @@
                         <td class="px-2 py-4 font-semibold text-gray-700 align-middle">
                             <p class="truncate" title="{{ $laporan->dosen?->nama ?? '-' }}">{{ $laporan->dosen?->nama ?? '-' }}</p>
                         </td>
-                        <td class="px-2 py-4 text-gray-500 align-middle">{{ $laporan->dosen?->laporans_count ?? 0 }}</td>
                         <td class="px-2 py-4 text-gray-500 align-middle">
                             <p class="truncate" title="{{ $laporan->nama_mahasiswa }}">{{ $laporan->nama_mahasiswa }}</p>
                         </td>
@@ -84,7 +76,6 @@
                             @php
                                 $detailData = [
                                     'dosen' => $laporan->dosen?->nama ?? '-',
-                                    'total' => $laporan->dosen?->laporans_count ?? 0,
                                     'mahasiswa' => $laporan->nama_mahasiswa,
                                     'nim' => $laporan->nim_mahasiswa,
                                     'kegiatan' => $laporan->kegiatan?->jenis_kegiatan ?? '-',
@@ -107,7 +98,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="text-center py-12 text-gray-400">Belum ada laporan.</td>
+                        <td colspan="7" class="text-center py-12 text-gray-400">Belum ada laporan.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -175,10 +166,6 @@
                 <p id="detailDosen" class="mt-1 font-semibold text-gray-800"></p>
             </div>
             <div class="rounded-xl bg-gray-50 p-4">
-                <p class="text-xs font-bold uppercase tracking-wide text-gray-400">Total Laporan Dosen</p>
-                <p id="detailTotal" class="mt-1 font-semibold text-gray-800"></p>
-            </div>
-            <div class="rounded-xl bg-gray-50 p-4">
                 <p class="text-xs font-bold uppercase tracking-wide text-gray-400">Mahasiswa</p>
                 <p id="detailMahasiswa" class="mt-1 font-semibold text-gray-800"></p>
             </div>
@@ -229,7 +216,6 @@
 
     function openDetailModal(data) {
         document.getElementById('detailDosen').innerText = data.dosen;
-        document.getElementById('detailTotal').innerText = data.total;
         document.getElementById('detailMahasiswa').innerText = data.mahasiswa;
         document.getElementById('detailNim').innerText = data.nim;
         document.getElementById('detailKegiatan').innerText = data.kegiatan;

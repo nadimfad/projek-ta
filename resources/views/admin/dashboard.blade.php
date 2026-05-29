@@ -6,127 +6,236 @@
 <div class="space-y-6">
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-            <h2 class="text-xl font-bold text-gray-800">10 Laporan Terbaru</h2>
-            <p class="text-sm text-gray-400 mt-1">Data selebihnya tersimpan di halaman Laporan.</p>
+            <h2 class="text-xl font-bold text-gray-800">Ringkasan Laporan</h2>
+            <p class="mt-1 text-sm text-gray-400">Pantau aktivitas laporan, dosen pelapor, dan data pengguna SIGAP.</p>
         </div>
 
-        <div class="flex flex-wrap gap-3">
-            <form method="GET" action="{{ route('dashboard') }}" class="flex gap-3">
-                <select name="id_kegiatan" class="border-gray-200 rounded-lg shadow-sm text-sm">
-                    <option value="">Semua Kegiatan</option>
-                    @foreach($kegiatans as $kegiatan)
-                        <option value="{{ $kegiatan->id_kegiatan }}" {{ request('id_kegiatan') == $kegiatan->id_kegiatan ? 'selected' : '' }}>
-                            {{ $kegiatan->jenis_kegiatan }}
-                        </option>
-                    @endforeach
-                </select>
+        <a href="{{ route('admin.laporan.index') }}" class="inline-flex items-center justify-center rounded-xl bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+            Lihat Semua Laporan
+        </a>
+    </div>
 
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Filter</button>
-            </form>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <p class="text-sm font-semibold text-gray-400">Total Laporan</p>
+            <p class="mt-3 text-3xl font-bold text-gray-800">{{ number_format($totalLaporan) }}</p>
+            <p class="mt-2 text-xs text-gray-400">Seluruh laporan yang tersimpan.</p>
+        </div>
 
-            <a href="{{ route('admin.laporan.index') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition">
-                Lihat Semua
-            </a>
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <p class="text-sm font-semibold text-gray-400">Laporan Minggu Ini</p>
+            <p class="mt-3 text-3xl font-bold text-blue-600">{{ number_format($laporanMingguIni) }}</p>
+            <p class="mt-2 text-xs text-gray-400">Berdasarkan tanggal kegiatan.</p>
+        </div>
+
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <p class="text-sm font-semibold text-gray-400">Laporan Bulan Ini</p>
+            <p class="mt-3 text-3xl font-bold text-green-600">{{ number_format($laporanBulanIni) }}</p>
+            <p class="mt-2 text-xs text-gray-400">Akumulasi bulan berjalan.</p>
+        </div>
+
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <p class="text-sm font-semibold text-gray-400">Dosen Pelapor</p>
+            <p class="mt-3 text-3xl font-bold text-red-600">{{ number_format($totalDosenPelapor) }}</p>
+            <p class="mt-2 text-xs text-gray-400">Dosen yang pernah mengirim laporan.</p>
         </div>
     </div>
 
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[880px] text-sm text-center">
-                <thead class="bg-gray-50 text-gray-400 uppercase text-[11px] tracking-widest">
-                    <tr>
-                        <th class="px-6 py-4 text-center font-semibold">Dosen</th>
-                        <th class="px-6 py-4 text-center font-semibold">Mahasiswa</th>
-                        <th class="px-6 py-4 text-center font-semibold">NIM</th>
-                        <th class="px-6 py-4 text-center font-semibold">Kegiatan</th>
-                        <th class="px-6 py-4 text-center font-semibold">Bentuk Gratifikasi</th>
-                        <th class="px-6 py-4 text-center font-semibold">Foto</th>
-                        <th class="px-6 py-4 text-center font-semibold">Tanggal</th>
-                    </tr>
-                </thead>
+    <div class="grid gap-6 xl:grid-cols-[1.7fr_0.9fr]">
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div class="mb-6 flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">Grafik 12 Bulan Terakhir</h3>
+                    <p class="mt-1 text-sm text-gray-400">Jumlah laporan berdasarkan tanggal kegiatan.</p>
+                </div>
+            </div>
+            <div class="h-[320px]">
+                <canvas id="monthlyReportChart"></canvas>
+            </div>
+        </div>
 
-                <tbody class="divide-y divide-gray-50">
-                    @forelse ($laporanTerbaru as $laporan)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-5 font-semibold text-gray-700 align-middle">{{ $laporan->dosen?->nama ?? '-' }}</td>
-                        <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->nama_mahasiswa }}</td>
-                        <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->nim_mahasiswa }}</td>
-                        <td class="px-6 py-5">
-                            @php
-                                $jenisKegiatan = $laporan->kegiatan?->jenis_kegiatan;
-                                $warnaKegiatan = match ($jenisKegiatan) {
-                                    'Seminar Kerja Praktek' => 'bg-blue-100 text-blue-700',
-                                    'Seminar Proposal' => 'bg-green-100 text-green-700',
-                                    'Seminar Hasil/Sidang Tertutup' => 'bg-yellow-100 text-yellow-700',
-                                    'Seminar Akhir/Sidang Terbuka' => 'bg-red-100 text-red-700',
-                                    default => 'bg-gray-100 text-gray-600',
-                                };
-                            @endphp
-                            <span class="inline-flex justify-center px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wide {{ $warnaKegiatan }}">
-                                {{ $jenisKegiatan ?? '-' }}
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-bold text-gray-800">Data User</h3>
+            <p class="mt-1 text-sm text-gray-400">Komposisi pengguna sistem.</p>
+
+            <div class="mt-6 space-y-4">
+                <div class="flex items-center justify-between rounded-xl bg-gray-50 p-4">
+                    <span class="font-semibold text-gray-600">Admin</span>
+                    <span class="rounded-lg bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">{{ number_format($totalAdmin) }}</span>
+                </div>
+                <div class="flex items-center justify-between rounded-xl bg-gray-50 p-4">
+                    <span class="font-semibold text-gray-600">Dosen</span>
+                    <span class="rounded-lg bg-green-100 px-3 py-1 text-sm font-bold text-green-700">{{ number_format($totalDosen) }}</span>
+                </div>
+                <div class="flex items-center justify-between rounded-xl bg-gray-900 p-4">
+                    <span class="font-semibold text-white">Total Pengguna</span>
+                    <span class="rounded-lg bg-white px-3 py-1 text-sm font-bold text-gray-900">{{ number_format($totalPengguna) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-[1.55fr_0.95fr]">
+        <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-5">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">Laporan Terbaru</h3>
+                    <p class="mt-1 text-sm text-gray-400">10 laporan paling baru yang masuk.</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[840px] text-center text-sm">
+                    <thead class="bg-gray-50 text-[11px] uppercase tracking-widest text-gray-400">
+                        <tr>
+                            <th class="px-5 py-4 font-semibold">Dosen</th>
+                            <th class="px-5 py-4 font-semibold">Mahasiswa</th>
+                            <th class="px-5 py-4 font-semibold">Kegiatan</th>
+                            <th class="px-5 py-4 font-semibold">Bentuk</th>
+                            <th class="px-5 py-4 font-semibold">Tanggal</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse ($laporanTerbaru as $laporan)
+                        <tr class="transition hover:bg-gray-50">
+                            <td class="px-5 py-4 font-semibold text-gray-700">{{ $laporan->dosen?->nama ?? '-' }}</td>
+                            <td class="px-5 py-4 text-gray-500">{{ $laporan->nama_mahasiswa }}</td>
+                            <td class="px-5 py-4">
+                                @php
+                                    $jenisKegiatan = $laporan->kegiatan?->jenis_kegiatan;
+                                    $warnaKegiatan = match ($jenisKegiatan) {
+                                        'Seminar Kerja Praktek' => 'bg-blue-100 text-blue-700',
+                                        'Seminar Proposal' => 'bg-green-100 text-green-700',
+                                        'Seminar Hasil/Sidang Tertutup' => 'bg-yellow-100 text-yellow-700',
+                                        'Seminar Akhir/Sidang Terbuka' => 'bg-red-100 text-red-700',
+                                        default => 'bg-gray-100 text-gray-600',
+                                    };
+                                @endphp
+                                <span class="inline-flex max-w-full justify-center whitespace-normal break-words rounded-lg px-2 py-1 text-[10px] font-bold uppercase leading-snug tracking-wide {{ $warnaKegiatan }}">
+                                    {{ $jenisKegiatan ?? '-' }}
+                                </span>
+                            </td>
+                            <td class="px-5 py-4 text-gray-500">{{ $laporan->bentuk_gratifikasi }}</td>
+                            <td class="whitespace-nowrap px-5 py-4 font-medium text-gray-400">{{ $laporan->tanggal_kegiatan }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="py-12 text-center text-gray-400">Belum ada laporan.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-bold text-gray-800">Dosen Paling Sering Melapor</h3>
+            <p class="mt-1 text-sm text-gray-400">Diurutkan berdasarkan jumlah laporan.</p>
+
+            <div class="mt-6 space-y-4">
+                @forelse ($dosenPelapor as $index => $dosen)
+                    <div class="flex items-center gap-4 rounded-xl bg-gray-50 p-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-sm font-bold text-white">
+                            {{ $dosenPelapor->firstItem() + $index }}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate font-semibold text-gray-700">{{ $dosen->nama }}</p>
+                            <p class="truncate text-xs text-gray-400">{{ $dosen->email }}</p>
+                        </div>
+                        <span class="rounded-lg bg-blue-50 px-3 py-1 text-sm font-bold text-blue-700">
+                            {{ $dosen->laporans_count }}
+                        </span>
+                    </div>
+                @empty
+                    <div class="rounded-xl bg-gray-50 p-6 text-center text-sm text-gray-400">
+                        Belum ada data dosen.
+                    </div>
+                @endforelse
+            </div>
+
+            @if ($dosenPelapor->hasPages())
+                <div class="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                    <p class="text-xs font-medium text-gray-400">
+                        {{ $dosenPelapor->firstItem() }}-{{ $dosenPelapor->lastItem() }} dari {{ $dosenPelapor->total() }} dosen
+                    </p>
+
+                    <div class="flex items-center gap-2">
+                        @if ($dosenPelapor->onFirstPage())
+                            <span class="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-400">
+                                Prev
                             </span>
-                        </td>
-                        <td class="px-6 py-5 text-gray-500 align-middle">{{ $laporan->bentuk_gratifikasi }}</td>
-                        <td class="px-6 py-5 align-middle">
-                            <div class="flex justify-center gap-2">
-                                @forelse($laporan->buktiLaporans->whereNotNull('file_path')->take(3) as $bukti)
-                                    <button type="button"
-                                        onclick="openPhotoModal('{{ asset('storage/'.$bukti->file_path) }}')"
-                                        class="h-10 w-10 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 hover:ring-2 hover:ring-blue-400 transition">
-                                        <img src="{{ asset('storage/'.$bukti->file_path) }}" alt="Foto gratifikasi" class="h-full w-full object-cover">
-                                    </button>
-                                @empty
-                                    <span class="text-gray-300">-</span>
-                                @endforelse
-                            </div>
-                        </td>
-                        <td class="px-6 py-5 text-gray-400 font-medium align-middle">{{ $laporan->tanggal_kegiatan }}</td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-12 text-gray-400">Belum ada laporan.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                        @else
+                            <a href="{{ $dosenPelapor->previousPageUrl() }}" class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                                Prev
+                            </a>
+                        @endif
+
+                        <span class="rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white">
+                            {{ $dosenPelapor->currentPage() }} / {{ $dosenPelapor->lastPage() }}
+                        </span>
+
+                        @if ($dosenPelapor->hasMorePages())
+                            <a href="{{ $dosenPelapor->nextPageUrl() }}" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-600 hover:text-white">
+                                Next
+                            </a>
+                        @else
+                            <span class="rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-400">
+                                Next
+                            </span>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>
 
-<div id="photoModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
-    <div class="relative max-h-[90vh] w-full max-w-4xl">
-        <button type="button" onclick="closePhotoModal()" class="absolute -top-10 right-0 rounded-lg bg-white/90 px-3 py-1 text-sm font-semibold text-gray-700 hover:bg-white">
-            Tutup
-        </button>
-        <img id="photoModalImage" src="" alt="Preview foto gratifikasi" class="max-h-[90vh] w-full rounded-2xl object-contain bg-white shadow-2xl">
-    </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const photoModal = document.getElementById('photoModal');
-    const photoModalImage = document.getElementById('photoModalImage');
+    const monthlyReportChart = document.getElementById('monthlyReportChart').getContext('2d');
 
-    function openPhotoModal(src) {
-        photoModalImage.src = src;
-        photoModal.classList.remove('hidden');
-        photoModal.classList.add('flex');
-    }
-
-    function closePhotoModal() {
-        photoModal.classList.add('hidden');
-        photoModal.classList.remove('flex');
-        photoModalImage.src = '';
-    }
-
-    photoModal.addEventListener('click', function (event) {
-        if (event.target === photoModal) {
-            closePhotoModal();
-        }
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && !photoModal.classList.contains('hidden')) {
-            closePhotoModal();
+    new Chart(monthlyReportChart, {
+        type: 'line',
+        data: {
+            labels: @json($labelBulanan),
+            datasets: [{
+                label: 'Jumlah Laporan',
+                data: @json($dataBulanan),
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    grid: {
+                        color: '#f1f5f9'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
         }
     });
 </script>

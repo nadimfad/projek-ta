@@ -75,54 +75,63 @@
     </div>
 </div>
 
-<div id="createModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
-    <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
-        <div class="mb-6 flex items-center justify-between gap-4">
+<div id="createModal" class="fixed inset-0 z-50 hidden h-screen w-screen items-stretch justify-stretch bg-white">
+    <div class="flex h-screen w-screen flex-col overflow-hidden bg-white">
+        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-5 sm:px-10">
             <div>
-                <h2 class="text-lg font-bold text-gray-800">Buat Akun Dosen</h2>
-                <p class="mt-1 text-sm text-gray-400">Username login dosen otomatis memakai NIP.</p>
+                <h2 class="text-xl font-bold text-gray-800">Buat Akun Dosen</h2>
+                <p class="mt-1 text-sm text-gray-400">Dosen dapat login menggunakan NIP atau email yang dibuat admin.</p>
             </div>
-            <button type="button" onclick="closeCreateModal()" class="rounded-lg bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-200">
+            <button type="button" onclick="closeCreateModal()" class="rounded-xl bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-200">
                 Tutup
             </button>
         </div>
 
-        <form method="POST" action="{{ route('admin.users.store') }}" class="space-y-5">
-            @csrf
+        <div class="flex flex-1 items-center justify-center px-6 py-6 sm:px-10">
+            <form method="POST" action="{{ route('admin.users.store') }}" class="w-full max-w-5xl rounded-2xl border border-gray-100 bg-gray-50 p-6 shadow-sm">
+                @csrf
 
-            <div>
-                <label class="mb-2 block text-sm font-semibold text-gray-600">Nama Dosen</label>
-                <input type="text" name="nama" value="{{ old('nama') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
-                @error('nama') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
-            </div>
+                <div class="grid gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Nama Dosen</label>
+                        <input type="text" name="nama" value="{{ old('nama') }}" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        @error('nama') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-semibold text-gray-600">NIP</label>
-                <input type="text" name="nip" value="{{ old('nip') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
-                @error('nip') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
-            </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">NIP</label>
+                        <input type="text" name="nip" value="{{ old('nip') }}" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        @error('nip') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-semibold text-gray-600">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
-                @error('email') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
-            </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Email</label>
+                        <input type="email" name="email" value="{{ old('email') }}" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        @error('email') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-semibold text-gray-600">Password</label>
-                <input type="password" name="password" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
-                @error('password') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
-            </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Password</label>
+                        <input type="password" name="password" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        @error('password') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
 
-            <div>
-                <label class="mb-2 block text-sm font-semibold text-gray-600">Konfirmasi Password</label>
-                <input type="password" name="password_confirmation" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
-            </div>
+                    <div class="md:col-span-2">
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Konfirmasi Password</label>
+                        <input type="password" name="password_confirmation" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                    </div>
+                </div>
 
-            <button type="submit" class="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700">
-                Simpan Akun
-            </button>
-        </form>
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="button" onclick="closeCreateModal()" class="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-100">
+                        Batal
+                    </button>
+                    <button type="submit" class="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+                        Simpan Akun
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -162,6 +171,32 @@
         </form>
     </div>
 </div>
+
+@if ($errors->any())
+<div id="userErrorPopup"
+     class="fixed top-6 right-6 z-[9999] translate-x-[120%] opacity-0 transition-all duration-500">
+    <div class="flex min-w-[340px] max-w-md items-start gap-4 rounded-2xl border border-red-100 bg-white px-5 py-4 shadow-2xl">
+        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/>
+            </svg>
+        </div>
+
+        <div class="flex-1">
+            <h3 class="text-sm font-bold text-slate-800">Data Tidak Bisa Disimpan</h3>
+            <ul class="mt-2 space-y-1 text-sm text-slate-500">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+
+        <button type="button" onclick="closeUserErrorPopup()" class="text-xl leading-none text-gray-400 transition hover:text-red-500">
+            x
+        </button>
+    </div>
+</div>
+@endif
 
 <script>
     const createModal = document.getElementById('createModal');
@@ -209,5 +244,21 @@
             closeEditModal();
         }
     });
+
+    @if ($errors->any())
+        const userErrorPopup = document.getElementById('userErrorPopup');
+
+        setTimeout(() => {
+            userErrorPopup.classList.remove('translate-x-[120%]', 'opacity-0');
+        }, 100);
+
+        setTimeout(() => {
+            closeUserErrorPopup();
+        }, 5000);
+
+        function closeUserErrorPopup() {
+            userErrorPopup.classList.add('translate-x-[120%]', 'opacity-0');
+        }
+    @endif
 </script>
 @endsection

@@ -40,14 +40,6 @@ class LaporanController extends Controller
         }
 
         if (auth()->user()->role === 'admin') {
-            if ($request->sort == 'dosen_terbanyak') {
-                $query->orderByRaw('(select count(*) from laporans as dosen_laporans where dosen_laporans.id_dosen = laporans.id_dosen) desc');
-            }
-
-            if ($request->sort == 'dosen_terdikit') {
-                $query->orderByRaw('(select count(*) from laporans as dosen_laporans where dosen_laporans.id_dosen = laporans.id_dosen) asc');
-            }
-
             $laporans = $query
                 ->latest()
                 ->paginate(20)
@@ -91,8 +83,8 @@ class LaporanController extends Controller
             'nim_mahasiswa' => ['required', 'string', 'max:50'],
             'bentuk_gratifikasi' => ['required', 'string', 'max:255'],
             'tanggal_kegiatan' => ['nullable', 'date'],
-            'keterangan' => ['nullable', 'string'],
-            'fotos' => ['nullable', 'array'],
+            'keterangan' => ['required', 'string'],
+            'fotos' => ['required', 'array', 'min:1'],
             'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ]);
 
@@ -120,7 +112,7 @@ class LaporanController extends Controller
             ]);
         }
 
-        return redirect('/laporan')->with('success', 'Data berhasil ditambahkan');
+        return redirect('/laporan')->with('success', 'Laporan berhasil disimpan.');
     }
 
     public function update(Request $request, $id)
