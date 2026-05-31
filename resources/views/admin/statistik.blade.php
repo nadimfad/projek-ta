@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layout')
 
 @section('title', 'Statistik Laporan')
 
@@ -19,6 +19,22 @@
                     </option>
                 @endforeach
             </select>
+
+            <input type="hidden" id="statistikDateFrom" name="date_from" value="{{ request('date_from') }}">
+            <input type="hidden" id="statistikDateTo" name="date_to" value="{{ request('date_to') }}">
+
+            <button type="button" onclick="openDateRangeModal()" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span id="dateRangeLabel">
+                    @if (request('date_from') && request('date_to'))
+                        {{ request('date_from') }} - {{ request('date_to') }}
+                    @else
+                        Pilih Rentang Tanggal
+                    @endif
+                </span>
+            </button>
 
             <button class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">Filter</button>
             <a href="{{ route('admin.statistik') }}" class="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-300">Reset</a>
@@ -85,8 +101,90 @@
     </div>
 </div>
 
+<div id="dateRangeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Pilih Rentang Tanggal</h3>
+                <p class="mt-1 text-sm text-gray-400">Tentukan tanggal awal dan akhir laporan.</p>
+            </div>
+            <button type="button" onclick="closeDateRangeModal()" class="rounded-lg bg-gray-100 px-3 py-1 text-sm font-semibold text-gray-600 hover:bg-gray-200">Tutup</button>
+        </div>
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-600">Tanggal Mulai</label>
+                <input type="date" id="dateRangeFromInput" value="{{ request('date_from') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-600">Tanggal Akhir</label>
+                <input type="date" id="dateRangeToInput" value="{{ request('date_to') }}" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+            <button type="button" onclick="clearDateRange()" class="rounded-xl bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-200">Hapus</button>
+            <button type="button" onclick="applyDateRange()" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">Gunakan Rentang</button>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    const dateRangeModal = document.getElementById('dateRangeModal');
+    const statistikDateFrom = document.getElementById('statistikDateFrom');
+    const statistikDateTo = document.getElementById('statistikDateTo');
+    const dateRangeFromInput = document.getElementById('dateRangeFromInput');
+    const dateRangeToInput = document.getElementById('dateRangeToInput');
+    const dateRangeLabel = document.getElementById('dateRangeLabel');
+
+    function openDateRangeModal() {
+        dateRangeModal.classList.remove('hidden');
+        dateRangeModal.classList.add('flex');
+    }
+
+    function closeDateRangeModal() {
+        dateRangeModal.classList.add('hidden');
+        dateRangeModal.classList.remove('flex');
+    }
+
+    function applyDateRange() {
+        if (dateRangeFromInput.value && dateRangeToInput.value && dateRangeToInput.value < dateRangeFromInput.value) {
+            dateRangeToInput.setCustomValidity('Tanggal akhir tidak boleh sebelum tanggal mulai.');
+            dateRangeToInput.reportValidity();
+            dateRangeToInput.setCustomValidity('');
+            return;
+        }
+
+        statistikDateFrom.value = dateRangeFromInput.value;
+        statistikDateTo.value = dateRangeToInput.value;
+        dateRangeLabel.innerText = dateRangeFromInput.value && dateRangeToInput.value
+            ? `${dateRangeFromInput.value} - ${dateRangeToInput.value}`
+            : 'Pilih Rentang Tanggal';
+        closeDateRangeModal();
+    }
+
+    function clearDateRange() {
+        dateRangeFromInput.value = '';
+        dateRangeToInput.value = '';
+        statistikDateFrom.value = '';
+        statistikDateTo.value = '';
+        dateRangeLabel.innerText = 'Pilih Rentang Tanggal';
+        closeDateRangeModal();
+    }
+
+    dateRangeModal.addEventListener('click', function (event) {
+        if (event.target === dateRangeModal) {
+            closeDateRangeModal();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeDateRangeModal();
+        }
+    });
+
     const chartColors = ['#2563eb', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#14b8a6', '#64748b', '#ec4899'];
     const kegiatanLabels = @json($labelKegiatan);
     const kegiatanColorMap = {

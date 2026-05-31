@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin.layout')
 
 @section('title', 'Manajemen User')
 
@@ -72,12 +72,46 @@
                 </tbody>
             </table>
         </div>
+
+        @if ($users->hasPages())
+            <div class="flex flex-col gap-4 border-t border-gray-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <p class="text-sm font-medium text-gray-500">
+                    Menampilkan {{ $users->firstItem() }}-{{ $users->lastItem() }} dari {{ $users->total() }} data
+                </p>
+
+                <div class="flex items-center justify-center gap-2">
+                    @if ($users->onFirstPage())
+                        <span class="rounded-xl border border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">
+                            Sebelumnya
+                        </span>
+                    @else
+                        <a href="{{ $users->previousPageUrl() }}" class="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                            Sebelumnya
+                        </a>
+                    @endif
+
+                    <span class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-sm">
+                        {{ $users->currentPage() }} / {{ $users->lastPage() }}
+                    </span>
+
+                    @if ($users->hasMorePages())
+                        <a href="{{ $users->nextPageUrl() }}" class="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-600 hover:text-white">
+                            Selanjutnya
+                        </a>
+                    @else
+                        <span class="rounded-xl border border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">
+                            Selanjutnya
+                        </span>
+                    @endif
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 
-<div id="createModal" class="fixed inset-0 z-50 hidden h-screen w-screen items-stretch justify-stretch bg-white">
-    <div class="flex h-screen w-screen flex-col overflow-hidden bg-white">
-        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-5 sm:px-10">
+<div id="createModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between gap-4 border-b border-gray-100 px-6 py-5">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Buat Akun Dosen</h2>
                 <p class="mt-1 text-sm text-gray-400">Dosen dapat login menggunakan NIP atau email yang dibuat admin.</p>
@@ -87,11 +121,11 @@
             </button>
         </div>
 
-        <div class="flex flex-1 items-center justify-center px-6 py-6 sm:px-10">
-            <form method="POST" action="{{ route('admin.users.store') }}" class="w-full max-w-5xl rounded-2xl border border-gray-100 bg-gray-50 p-6 shadow-sm">
+        <div class="p-6">
+            <form method="POST" action="{{ route('admin.users.store') }}" class="w-full">
                 @csrf
 
-                <div class="grid gap-5 md:grid-cols-2">
+                <div class="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label class="mb-2 block text-sm font-semibold text-gray-600">Nama Dosen</label>
                         <input type="text" name="nama" value="{{ old('nama') }}" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
@@ -116,7 +150,7 @@
                         @error('password') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div class="sm:col-span-2">
                         <label class="mb-2 block text-sm font-semibold text-gray-600">Konfirmasi Password</label>
                         <input type="password" name="password_confirmation" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
                     </div>

@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['role:admin'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/dosen-pelapor', [DashboardController::class, 'dosenPelapor'])->name('dashboard.dosen-pelapor');
 
     Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('admin.laporan.index');
 

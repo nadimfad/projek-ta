@@ -9,36 +9,28 @@
 </head>
 
 <body class="bg-slate-100 min-h-screen">
-<div class="flex min-h-screen flex-col md:flex-row">
-    <aside class="w-full md:w-[260px] bg-white border-b md:border-b-0 md:border-r border-gray-100 flex md:flex-col justify-between md:h-screen md:sticky top-0 z-30">
+<div class="flex min-h-screen">
+    <div id="dosenSidebarOverlay" onclick="closeDosenSidebar()" class="fixed inset-0 z-40 hidden bg-black/40 md:hidden"></div>
+
+    <aside id="dosenSidebar" class="fixed inset-y-0 left-0 z-50 flex h-screen w-[260px] -translate-x-full flex-col justify-between border-r border-gray-100 bg-white shadow-xl transition-transform duration-300 ease-in-out md:sticky md:top-0 md:z-30 md:translate-x-0 md:shadow-none">
         <div class="min-w-0">
-            <div class="flex justify-center px-4 sm:px-6 py-4 md:py-6">
+            <div class="relative flex justify-center px-4 py-5 md:px-6 md:py-6">
                 <img
                     src="/images/logo1.png"
                     alt="Logo"
                     class="h-14 md:h-16 w-auto max-w-[132px] object-contain"
                 />
-                {{-- <div class="w-11 h-11 md:w-14 md:h-14 rounded-2xl bg-blue-600 flex items-center justify-center shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="w-6 h-6 md:w-7 md:h-7 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 3l7 4v5c0 5-3.5 8.5-7 9-3.5-.5-7-4-7-9V7l7-4z"/>
+
+                <button type="button" onclick="closeDosenSidebar()" class="absolute right-4 top-5 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-slate-200 md:hidden" aria-label="Tutup sidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
-                </div> --}}
-{{-- 
-                <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">
-                    SIGAP
-                </h1> --}}
+                </button>
             </div>
 
-            <div class="px-4 pb-4 md:pb-0 md:mt-5 flex md:block gap-2 md:space-y-3 overflow-x-auto">
+            <div class="mt-5 space-y-3 px-4">
                 <a href="{{ route('laporan.index') }}"
-                   class="flex shrink-0 items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-2xl transition {{ request()->routeIs('laporan.index') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
+                   class="flex items-center gap-4 rounded-2xl px-5 py-4 transition {{ request()->routeIs('laporan.index') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                     </svg>
@@ -47,7 +39,7 @@
                 </a>
 
                 <a href="{{ route('laporan.history') }}"
-                   class="flex shrink-0 items-center gap-3 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-2xl transition {{ request()->routeIs('laporan.history') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
+                   class="flex items-center gap-4 rounded-2xl px-5 py-4 transition {{ request()->routeIs('laporan.history') ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-gray-100 font-medium' }}">
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-6 h-6"
                         fill="none"
@@ -81,16 +73,47 @@
                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V4"/>
                     </svg>
 
-                    <span class="hidden sm:inline">Keluar</span>
+                    <span>Keluar</span>
                 </button>
             </form>
         </div>
     </aside>
 
-    <main class="flex-1 p-4 sm:p-6 lg:p-10 min-w-0">
+    <main class="min-w-0 flex-1 p-4 sm:p-6 lg:p-10">
+        <div class="mb-4 flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm md:hidden">
+            <img src="/images/logo1.png" alt="Logo" class="h-10 w-auto object-contain">
+
+            <button type="button" onclick="openDosenSidebar()" class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 transition hover:bg-blue-100" aria-label="Buka sidebar">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+
         @yield('content')
     </main>
 </div>
+
+<script>
+    const dosenSidebar = document.getElementById('dosenSidebar');
+    const dosenSidebarOverlay = document.getElementById('dosenSidebarOverlay');
+
+    function openDosenSidebar() {
+        dosenSidebar.classList.remove('-translate-x-full');
+        dosenSidebarOverlay.classList.remove('hidden');
+    }
+
+    function closeDosenSidebar() {
+        dosenSidebar.classList.add('-translate-x-full');
+        dosenSidebarOverlay.classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeDosenSidebar();
+        }
+    });
+</script>
 
 @if(session('success'))
 <div id="successPopup"

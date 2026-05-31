@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Admin Panel</title>
@@ -241,7 +241,7 @@
         <div class="flex-1">
 
             <h3 class="font-semibold text-gray-800 text-sm">
-                Login Berhasil
+                Berhasil
             </h3>
 
             <p class="text-sm text-gray-500 mt-1">

@@ -14,7 +14,10 @@ class UserManagementController extends Controller
 {
     public function index(): View
     {
-        $users = User::with('dosen')->where('role', 'dosen')->latest()->get();
+        $users = User::with('dosen')
+            ->where('role', 'dosen')
+            ->latest()
+            ->paginate(5);
 
         return view('admin.users.index', compact('users'));
     }

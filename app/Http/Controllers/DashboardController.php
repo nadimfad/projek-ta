@@ -80,11 +80,18 @@ class DashboardController extends Controller
 
     public function statistik(Request $request): View
     {
+        $request->validate([
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
+        ]);
+
         $query = Laporan::query();
 
         if ($request->id_kegiatan) {
             $query->where('laporans.id_kegiatan', $request->id_kegiatan);
         }
+
+        $query = $this->applyDashboardDateFilter($query, $request);
 
         $totalLaporan = (clone $query)->count();
         $totalDosen = Dosen::count();
@@ -114,14 +121,15 @@ class DashboardController extends Controller
             DB::raw('DAYOFWEEK(tanggal_kegiatan) as hari'),
             DB::raw('COUNT(*) as total')
         )
+            ->whereRaw('DAYOFWEEK(tanggal_kegiatan) BETWEEN 2 AND 6')
             ->groupBy('hari')
             ->get()
             ->keyBy('hari');
 
-        $labelHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $labelHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
         $dataHari = [];
 
-        for ($i = 1; $i <= 7; $i++) {
+        for ($i = 2; $i <= 6; $i++) {
             $dataHari[] = $hariChart[$i]->total ?? 0;
         }
 
@@ -152,6 +160,30 @@ class DashboardController extends Controller
             'dataBukti',
             'kegiatans'
         ));
+    }
+
+    public function dosenPelapor(Request $request): View
+    {
+        $dosenPelapor = Dosen::withCount('laporans')
+            ->orderByDesc('laporans_count')
+            ->orderBy('nama')
+            ->paginate(5, ['*'], 'dosen_page')
+            ->withQueryString();
+
+        return view('admin.partials.dosen-pelapor', compact('dosenPelapor'));
+    }
+
+    private function applyDashboardDateFilter($query, Request $request)
+    {
+        if ($request->filled('date_from')) {
+            $query->whereDate('tanggal_kegiatan', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('tanggal_kegiatan', '<=', $request->date_to);
+        }
+
+        return $query;
     }
 
     public function getData(Request $request)

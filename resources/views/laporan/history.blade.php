@@ -5,7 +5,7 @@
 @section('content')
 <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
     <div>
-        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800">Riwayat Seluruh Laporan</h1>
+        <h2 class="text-xl  font-bold text-slate-800">Riwayat Seluruh Laporan</h2>
         <p class="text-slate-500 mt-1">Semua riwayat laporan yang pernah dikirim</p>
     </div>
 
@@ -26,7 +26,69 @@
 </div>
 
 <div class="bg-white rounded-[28px] shadow-sm border border-slate-100 overflow-hidden">
-    <div>
+    <div class="space-y-3 p-4 md:hidden">
+        @forelse ($laporans as $laporan)
+            @php
+                $jenisKegiatanMobile = $laporan->kegiatan?->jenis_kegiatan;
+                $warnaKegiatanMobile = match ($jenisKegiatanMobile) {
+                    'Seminar Kerja Praktek' => 'bg-blue-100 text-blue-700',
+                    'Seminar Proposal' => 'bg-green-100 text-green-700',
+                    'Seminar Hasil/Sidang Tertutup' => 'bg-yellow-100 text-yellow-700',
+                    'Seminar Akhir/Sidang Terbuka' => 'bg-red-100 text-red-700',
+                    default => 'bg-gray-100 text-gray-600',
+                };
+                $detailDataMobile = [
+                    'mahasiswa' => $laporan->nama_mahasiswa,
+                    'nim' => $laporan->nim_mahasiswa,
+                    'kegiatan' => $jenisKegiatanMobile ?? '-',
+                    'bentuk' => $laporan->bentuk_gratifikasi,
+                    'tanggal' => $laporan->tanggal_kegiatan,
+                    'keterangan' => $laporan->keterangan ?? '-',
+                    'fotos' => $laporan->buktiLaporans
+                        ->whereNotNull('file_path')
+                        ->map(fn ($bukti) => asset('storage/'.$bukti->file_path))
+                        ->values(),
+                ];
+            @endphp
+            <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="truncate font-bold text-slate-800">{{ $laporan->nama_mahasiswa }}</p>
+                        <p class="mt-1 text-xs font-medium text-slate-400">{{ $laporan->nim_mahasiswa }}</p>
+                    </div>
+                    <p class="whitespace-nowrap text-xs font-medium text-slate-400">{{ $laporan->tanggal_kegiatan }}</p>
+                </div>
+
+                <div class="mt-4">
+                    <span class="inline-flex max-w-full whitespace-normal break-words rounded-lg px-2 py-1 text-[10px] font-bold uppercase leading-snug tracking-wide {{ $warnaKegiatanMobile }}">
+                        {{ $jenisKegiatanMobile ?? '-' }}
+                    </span>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Bentuk</p>
+                        <p class="mt-1 truncate text-slate-600">{{ $laporan->bentuk_gratifikasi }}</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Keterangan</p>
+                        <p class="mt-1 truncate text-slate-600">{{ $laporan->keterangan }}</p>
+                    </div>
+                </div>
+
+                <button type="button"
+                    data-detail='@json($detailDataMobile)'
+                    onclick="openDetailModal(JSON.parse(this.dataset.detail))"
+                    class="mt-4 w-full rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-blue-700">
+                    Lihat Detail
+                </button>
+            </div>
+        @empty
+            <p class="py-8 text-center text-sm text-slate-400">Belum ada history laporan.</p>
+        @endforelse
+    </div>
+
+    <div class="hidden md:block">
         <table class="w-full table-fixed text-center text-xs xl:text-sm">
             <thead class="bg-slate-50 text-slate-500 uppercase text-[11px] tracking-wider">
                 <tr>
@@ -126,25 +188,25 @@
 
             <div class="flex items-center justify-center gap-2">
                 @if ($laporans->onFirstPage())
-                    <span class="rounded-2xl border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400">
+                    <span class="rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-400 sm:px-4 sm:text-sm">
                         Sebelumnya
                     </span>
                 @else
-                    <a href="{{ $laporans->previousPageUrl() }}" class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700">
+                    <a href="{{ $laporans->previousPageUrl() }}" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 sm:px-4 sm:text-sm">
                         Sebelumnya
                     </a>
                 @endif
 
-                <span class="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-sm">
+                <span class="rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white shadow-sm sm:px-4 sm:text-sm">
                     {{ $laporans->currentPage() }} / {{ $laporans->lastPage() }}
                 </span>
 
                 @if ($laporans->hasMorePages())
-                    <a href="{{ $laporans->nextPageUrl() }}" class="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-600 hover:text-white">
+                    <a href="{{ $laporans->nextPageUrl() }}" class="rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm transition hover:bg-blue-600 hover:text-white sm:px-4 sm:text-sm">
                         Selanjutnya
                     </a>
                 @else
-                    <span class="rounded-2xl border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400">
+                    <span class="rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-400 sm:px-4 sm:text-sm">
                         Selanjutnya
                     </span>
                 @endif
@@ -153,8 +215,8 @@
     @endif
 </div>
 
-<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 p-4">
-    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+<div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center overflow-x-hidden bg-black/60 p-3 sm:p-4">
+    <div class="max-h-[90vh] w-full min-w-0 max-w-3xl overflow-x-hidden overflow-y-auto rounded-2xl bg-white p-4 shadow-2xl sm:p-6">
         <div class="mb-5 flex items-start justify-between gap-4">
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Detail Laporan</h3>
@@ -163,7 +225,7 @@
             <button type="button" onclick="closeDetailModal()" class="rounded-lg bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600 hover:bg-slate-200">Tutup</button>
         </div>
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid min-w-0 gap-4 md:grid-cols-2">
             <div class="rounded-xl bg-slate-50 p-4">
                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Mahasiswa</p>
                 <p id="detailMahasiswa" class="mt-1 font-semibold text-slate-800"></p>
@@ -184,9 +246,9 @@
                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Bentuk Gratifikasi</p>
                 <p id="detailBentuk" class="mt-1 font-semibold text-slate-800"></p>
             </div>
-            <div class="rounded-xl bg-slate-50 p-4 md:col-span-2">
+            <div class="min-w-0 overflow-x-hidden rounded-xl bg-slate-50 p-4 md:col-span-2">
                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Keterangan</p>
-                <p id="detailKeterangan" class="mt-1 whitespace-pre-line break-words text-slate-700"></p>
+                <p id="detailKeterangan" class="mt-1 max-w-full whitespace-pre-line break-words text-slate-700 [overflow-wrap:anywhere]"></p>
             </div>
             <div class="rounded-xl bg-slate-50 p-4 md:col-span-2">
                 <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Foto</p>

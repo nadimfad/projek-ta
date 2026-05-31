@@ -104,7 +104,7 @@
                 <div>
                     <label class="block text-sm font-bold tracking-wider uppercase text-slate-400 mb-3">Upload Foto</label>
                     <input type="file" name="fotos[]" accept="image/*" capture="environment" multiple required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500">
-                    <p class="text-xs text-slate-400 mt-2">Bisa memilih beberapa foto atau membuka kamera langsung pada perangkat yang mendukung.</p>
+                    <p class="text-xs text-slate-400 mt-2">Bisa memilih beberapa foto atau membuka kamera langsung. Foto di atas 2 MB akan dikompresi otomatis.</p>
                     @error('fotos') <p class="text-sm text-red-500 mt-2">{{ $message }}</p> @enderror
                     @error('fotos.*') <p class="text-sm text-red-500 mt-2">{{ $message }}</p> @enderror
                 </div>

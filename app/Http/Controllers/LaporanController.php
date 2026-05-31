@@ -7,7 +7,11 @@ use App\Models\Dosen;
 use App\Models\Kegiatan;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class LaporanController extends Controller
 {
@@ -54,10 +58,10 @@ class LaporanController extends Controller
         $laporans = Laporan::with([
             'kegiatan',
             'buktiLaporans',
-        ])
+            ])
             ->where('id_dosen', $dosen?->id_dosen)
             ->latest()
-            ->limit(10)
+            ->limit(4)
             ->get();
         $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
@@ -85,34 +89,133 @@ class LaporanController extends Controller
             'tanggal_kegiatan' => ['nullable', 'date'],
             'keterangan' => ['required', 'string'],
             'fotos' => ['required', 'array', 'min:1'],
-            'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:51200'],
+        ], [
+            'fotos.*.max' => 'Ukuran awal setiap foto maksimal 50 MB.',
         ]);
 
         $data['id_dosen'] = $dosen->id_dosen;
         $data['tanggal_kegiatan'] = $data['tanggal_kegiatan'] ?? now()->toDateString();
 
-        $laporan = Laporan::create($data);
-
         $files = $request->file('fotos', []);
+        $storedPaths = [];
 
-        if (count($files) === 0) {
-            BuktiLaporan::create([
-                'id_laporan' => $laporan->id_laporan,
-                'nama' => $dosen->nama,
-                'email' => $dosen->email,
-            ]);
-        }
+        try {
+            foreach ($files as $file) {
+                $storedPaths[] = $this->storeCompressedPhoto($file);
+            }
 
-        foreach ($files as $file) {
-            BuktiLaporan::create([
-                'id_laporan' => $laporan->id_laporan,
-                'nama' => $dosen->nama,
-                'email' => $dosen->email,
-                'file_path' => $file->store('bukti-laporan', 'public'),
-            ]);
+            DB::transaction(function () use ($data, $dosen, $storedPaths) {
+                $laporan = Laporan::create($data);
+
+                foreach ($storedPaths as $path) {
+                    BuktiLaporan::create([
+                        'id_laporan' => $laporan->id_laporan,
+                        'nama' => $dosen->nama,
+                        'email' => $dosen->email,
+                        'file_path' => $path,
+                    ]);
+                }
+            });
+        } catch (\Throwable $exception) {
+            Storage::disk('public')->delete($storedPaths);
+
+            throw $exception;
         }
 
         return redirect('/laporan')->with('success', 'Laporan berhasil disimpan.');
+    }
+
+    private function storeCompressedPhoto(UploadedFile $file): string
+    {
+        $maxBytes = 2 * 1024 * 1024;
+
+        if ($file->getSize() <= $maxBytes) {
+            return $file->store('bukti-laporan', 'public');
+        }
+
+        $contents = file_get_contents($file->getRealPath());
+        $source = $contents === false ? false : @imagecreatefromstring($contents);
+
+        if ($source === false) {
+            throw ValidationException::withMessages([
+                'fotos' => 'Salah satu foto tidak dapat diproses. Gunakan file JPG, PNG, atau WEBP.',
+            ]);
+        }
+
+        $tempPath = tempnam(sys_get_temp_dir(), 'sigap-photo-');
+
+        if ($tempPath === false) {
+            imagedestroy($source);
+
+            throw ValidationException::withMessages([
+                'fotos' => 'Foto gagal dikompresi. Silakan coba kembali.',
+            ]);
+        }
+
+        $sourceWidth = imagesx($source);
+        $sourceHeight = imagesy($source);
+        $quality = 84;
+        $scale = min(1, 2400 / max($sourceWidth, $sourceHeight));
+        $size = $file->getSize();
+
+        try {
+            for ($attempt = 0; $attempt < 18 && $size > $maxBytes; $attempt++) {
+                $width = max(1, (int) floor($sourceWidth * $scale));
+                $height = max(1, (int) floor($sourceHeight * $scale));
+                $canvas = imagecreatetruecolor($width, $height);
+                $white = imagecolorallocate($canvas, 255, 255, 255);
+
+                imagefill($canvas, 0, 0, $white);
+                imagecopyresampled(
+                    $canvas,
+                    $source,
+                    0,
+                    0,
+                    0,
+                    0,
+                    $width,
+                    $height,
+                    $sourceWidth,
+                    $sourceHeight
+                );
+                imagejpeg($canvas, $tempPath, $quality);
+                imagedestroy($canvas);
+
+                clearstatcache(true, $tempPath);
+                $size = filesize($tempPath);
+
+                if ($quality > 60) {
+                    $quality -= 8;
+                } else {
+                    $scale *= 0.82;
+                    $quality = 78;
+                }
+            }
+
+            if ($size === false || $size > $maxBytes) {
+                throw ValidationException::withMessages([
+                    'fotos' => 'Salah satu foto tidak dapat dikompresi hingga maksimal 2 MB.',
+                ]);
+            }
+
+            $path = 'bukti-laporan/'.Str::uuid().'.jpg';
+            $compressedContents = file_get_contents($tempPath);
+
+            if ($compressedContents === false || ! Storage::disk('public')->put($path, $compressedContents)) {
+                throw ValidationException::withMessages([
+                    'fotos' => 'Foto gagal disimpan. Silakan coba kembali.',
+                ]);
+            }
+
+            return $path;
+        } finally {
+            imagedestroy($source);
+
+            if (is_file($tempPath)) {
+                unlink($tempPath);
+            }
+        }
     }
 
     public function update(Request $request, $id)
@@ -174,7 +277,7 @@ class LaporanController extends Controller
 
         $laporans = $query
             ->latest()
-            ->paginate(20)
+            ->paginate(4)
             ->withQueryString();
         $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 

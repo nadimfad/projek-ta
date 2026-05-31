@@ -6,8 +6,8 @@
 <div class="space-y-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-            <h2 class="text-xl font-bold text-gray-800">Daftar Laporan Saya</h2>
-            <p class="text-sm text-gray-400 mt-1">Pantau laporan yang pernah Anda kirim.</p>
+            <h2 class="text-xl font-bold text-slate-800">Daftar Laporan Saya</h2>
+            <p class="text-slate-500 mt-1">Pantau laporan yang pernah Anda kirim.</p>
         </div>
 
         <div>
@@ -18,7 +18,57 @@
     </div>
 
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="space-y-3 p-4 md:hidden">
+            @forelse($laporans as $laporan)
+                @php
+                    $jenisKegiatanMobile = $laporan->kegiatan?->jenis_kegiatan;
+                    $warnaKegiatanMobile = match ($jenisKegiatanMobile) {
+                        'Seminar Kerja Praktek' => 'bg-blue-100 text-blue-700',
+                        'Seminar Proposal' => 'bg-green-100 text-green-700',
+                        'Seminar Hasil/Sidang Tertutup' => 'bg-yellow-100 text-yellow-700',
+                        'Seminar Akhir/Sidang Terbuka' => 'bg-red-100 text-red-700',
+                        default => 'bg-gray-100 text-gray-600',
+                    };
+                @endphp
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="truncate font-bold text-slate-800">{{ $laporan->nama_mahasiswa }}</p>
+                            <p class="mt-1 text-xs font-medium text-slate-400">{{ $laporan->nim_mahasiswa }}</p>
+                        </div>
+                        <p class="whitespace-nowrap text-xs font-medium text-slate-400">{{ $laporan->tanggal_kegiatan }}</p>
+                    </div>
+
+                    <div class="mt-4">
+                        <span class="inline-flex max-w-full whitespace-normal break-words rounded-lg px-2 py-1 text-[10px] font-bold uppercase leading-snug tracking-wide {{ $warnaKegiatanMobile }}">
+                            {{ $jenisKegiatanMobile ?? '-' }}
+                        </span>
+                    </div>
+
+                    <div class="mt-4 flex items-end justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Bentuk Gratifikasi</p>
+                            <p class="mt-1 truncate text-sm text-slate-600">{{ $laporan->bentuk_gratifikasi }}</p>
+                        </div>
+                        <div class="flex shrink-0 gap-2">
+                            @forelse($laporan->buktiLaporans->whereNotNull('file_path')->take(2) as $bukti)
+                                <button type="button"
+                                    onclick="openPhotoModal('{{ asset('storage/'.$bukti->file_path) }}')"
+                                    class="h-10 w-10 overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:ring-2 hover:ring-blue-400">
+                                    <img src="{{ asset('storage/'.$bukti->file_path) }}" alt="Foto gratifikasi" class="h-full w-full object-cover">
+                                </button>
+                            @empty
+                                <span class="text-sm text-slate-300">-</span>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="py-8 text-center text-sm text-slate-400">Belum ada laporan.</p>
+            @endforelse
+        </div>
+
+        <div class="hidden overflow-x-auto md:block">
             <table class="w-full min-w-[820px] text-sm text-center">
                 <thead class="bg-gray-50 text-gray-400 uppercase text-[11px] tracking-widest">
                     <tr>
@@ -161,8 +211,9 @@
             <div id="reportStep3" class="report-step hidden space-y-6">
                 <div>
                     <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Upload Foto</label>
-                    <input type="file" name="fotos[]" accept="image/*" capture="environment" multiple required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
-                    <p class="mt-2 text-xs text-slate-400">Bisa memilih beberapa foto atau membuka kamera langsung pada perangkat yang mendukung.</p>
+                    <input id="reportPhotoInput" type="file" name="fotos[]" accept="image/*" capture="environment" multiple required class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="mt-2 text-xs text-slate-400">Bisa memilih beberapa foto atau membuka kamera langsung. Foto di atas 2 MB akan disiapkan otomatis sebelum dikirim.</p>
+                    <p id="reportPhotoStatus" class="mt-2 hidden text-xs font-semibold"></p>
                     @error('fotos') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                     @error('fotos.*') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                 </div>
@@ -222,7 +273,12 @@
     const prevReportStepButton = document.getElementById('prevReportStepButton');
     const nextReportStepButton = document.getElementById('nextReportStepButton');
     const submitReportButton = document.getElementById('submitReportButton');
+    const reportPhotoInput = document.getElementById('reportPhotoInput');
+    const reportPhotoStatus = document.getElementById('reportPhotoStatus');
+    const maxPhotoBytes = 2 * 1024 * 1024;
     let currentReportStep = 1;
+    let photoPreparationToken = 0;
+    let photosArePreparing = false;
 
     function openCreateReportModal(step = 1) {
         createReportModal.classList.remove('hidden');
@@ -279,6 +335,149 @@
             showReportStep(currentReportStep - 1);
         }
     }
+
+    function updatePhotoStatus(message = '', type = 'info') {
+        reportPhotoStatus.textContent = message;
+        reportPhotoStatus.classList.toggle('hidden', message === '');
+        reportPhotoStatus.classList.toggle('text-blue-600', type === 'info');
+        reportPhotoStatus.classList.toggle('text-green-600', type === 'success');
+        reportPhotoStatus.classList.toggle('text-red-500', type === 'error');
+    }
+
+    function setPhotoPreparationState(isPreparing) {
+        photosArePreparing = isPreparing;
+        submitReportButton.disabled = isPreparing;
+        submitReportButton.classList.toggle('cursor-wait', isPreparing);
+        submitReportButton.classList.toggle('opacity-60', isPreparing);
+        submitReportButton.textContent = isPreparing ? 'Menyiapkan Foto...' : 'Simpan Laporan';
+    }
+
+    async function loadPhoto(file) {
+        if ('createImageBitmap' in window) {
+            return createImageBitmap(file, { imageOrientation: 'from-image' });
+        }
+
+        return new Promise((resolve, reject) => {
+            const image = new Image();
+            const url = URL.createObjectURL(file);
+
+            image.onload = () => {
+                URL.revokeObjectURL(url);
+                resolve(image);
+            };
+            image.onerror = () => {
+                URL.revokeObjectURL(url);
+                reject(new Error('Foto tidak dapat dibaca.'));
+            };
+            image.src = url;
+        });
+    }
+
+    function canvasToJpeg(canvas, quality) {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                blob ? resolve(blob) : reject(new Error('Foto gagal dikompresi.'));
+            }, 'image/jpeg', quality);
+        });
+    }
+
+    async function compressPhotoInBrowser(file) {
+        if (file.size <= maxPhotoBytes) {
+            return file;
+        }
+
+        const image = await loadPhoto(file);
+        const sourceWidth = image.width;
+        const sourceHeight = image.height;
+        let scale = Math.min(1, 1920 / Math.max(sourceWidth, sourceHeight));
+        let quality = 0.82;
+        let blob;
+
+        try {
+            for (let attempt = 0; attempt < 10; attempt++) {
+                const canvas = document.createElement('canvas');
+                canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+                canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+
+                const context = canvas.getContext('2d');
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+                blob = await canvasToJpeg(canvas, quality);
+
+                if (blob.size <= maxPhotoBytes) {
+                    break;
+                }
+
+                if (quality > 0.58) {
+                    quality -= 0.1;
+                } else {
+                    scale *= 0.8;
+                    quality = 0.76;
+                }
+            }
+        } finally {
+            if (typeof image.close === 'function') {
+                image.close();
+            }
+        }
+
+        if (!blob || blob.size > maxPhotoBytes) {
+            throw new Error('Foto tidak dapat dikecilkan hingga maksimal 2 MB.');
+        }
+
+        const baseName = file.name.replace(/\.[^.]+$/, '') || 'foto';
+
+        return new File([blob], `${baseName}.jpg`, {
+            type: 'image/jpeg',
+            lastModified: Date.now(),
+        });
+    }
+
+    reportPhotoInput.addEventListener('change', async function () {
+        const selectedFiles = Array.from(reportPhotoInput.files);
+        const currentToken = ++photoPreparationToken;
+
+        if (selectedFiles.length === 0) {
+            updatePhotoStatus();
+            return;
+        }
+
+        setPhotoPreparationState(true);
+        updatePhotoStatus('Menyiapkan foto agar proses simpan lebih cepat...', 'info');
+
+        try {
+            const preparedFiles = [];
+
+            for (const file of selectedFiles) {
+                preparedFiles.push(await compressPhotoInBrowser(file));
+            }
+
+            if (currentToken !== photoPreparationToken) {
+                return;
+            }
+
+            const transfer = new DataTransfer();
+            preparedFiles.forEach((file) => transfer.items.add(file));
+            reportPhotoInput.files = transfer.files;
+            updatePhotoStatus(`${preparedFiles.length} foto siap dikirim.`, 'success');
+        } catch (error) {
+            if (currentToken === photoPreparationToken) {
+                updatePhotoStatus('Foto akan diproses kembali saat laporan disimpan.', 'error');
+            }
+        } finally {
+            if (currentToken === photoPreparationToken) {
+                setPhotoPreparationState(false);
+            }
+        }
+    });
+
+    createReportForm.addEventListener('submit', function (event) {
+        if (photosArePreparing) {
+            event.preventDefault();
+            updatePhotoStatus('Tunggu sebentar, foto masih disiapkan.', 'info');
+        }
+    });
 
     function openPhotoModal(src) {
         photoModalImage.src = src;
