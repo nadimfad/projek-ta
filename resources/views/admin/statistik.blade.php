@@ -7,7 +7,7 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
             <h2 class="text-xl font-bold text-gray-800">Analisis Laporan</h2>
-            <p class="mt-1 text-sm text-gray-400">Lihat pola laporan berdasarkan kegiatan, dosen, hari, dan kelengkapan bukti.</p>
+            <p class="mt-1 text-sm text-gray-400">Lihat pola laporan berdasarkan kegiatan, dosen, hari, dan bentuk gratifikasi.</p>
         </div>
 
         <form method="GET" action="{{ route('admin.statistik') }}" class="flex flex-wrap gap-3">
@@ -91,11 +91,11 @@
 
         <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div class="mb-5">
-                <h2 class="text-lg font-semibold text-gray-700">Kelengkapan Bukti Foto</h2>
-                <p class="mt-1 text-sm text-gray-400">Perbandingan laporan dengan dan tanpa foto pendukung.</p>
+                <h2 class="text-lg font-semibold text-gray-700">Bentuk Gratifikasi Paling Sering Dilaporkan</h2>
+                <p class="mt-1 text-sm text-gray-400">8 bentuk gratifikasi dengan jumlah laporan tertinggi.</p>
             </div>
             <div class="h-[350px]">
-                <canvas id="chartBukti"></canvas>
+                <canvas id="chartBentukGratifikasi"></canvas>
             </div>
         </div>
     </div>
@@ -295,22 +295,40 @@
         }
     });
 
-    new Chart(document.getElementById('chartBukti').getContext('2d'), {
-        type: 'pie',
+    new Chart(document.getElementById('chartBentukGratifikasi').getContext('2d'), {
+        type: 'bar',
         data: {
-            labels: @json($labelBukti),
+            labels: @json($labelBentukGratifikasi),
             datasets: [{
-                data: @json($dataBukti),
-                backgroundColor: ['#2563eb', '#e5e7eb'],
-                borderWidth: 0
+                label: 'Jumlah Laporan',
+                data: @json($dataBentukGratifikasi),
+                backgroundColor: '#f59e0b',
+                borderRadius: 8
             }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    grid: {
+                        color: '#f1f5f9'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
                 }
             }
         }

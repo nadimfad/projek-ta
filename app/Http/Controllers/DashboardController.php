@@ -133,17 +133,17 @@ class DashboardController extends Controller
             $dataHari[] = $hariChart[$i]->total ?? 0;
         }
 
-        $laporanIds = (clone $query)->pluck('id_laporan');
-        $laporanDenganFoto = $laporanIds->isEmpty()
-            ? 0
-            : DB::table('bukti_laporans')
-                ->whereIn('id_laporan', $laporanIds)
-                ->whereNotNull('file_path')
-                ->distinct('id_laporan')
-                ->count('id_laporan');
-        $laporanTanpaFoto = max($totalLaporan - $laporanDenganFoto, 0);
-        $labelBukti = ['Dengan Foto', 'Tanpa Foto'];
-        $dataBukti = [$laporanDenganFoto, $laporanTanpaFoto];
+        $bentukGratifikasiChart = (clone $query)
+            ->whereNotNull('bentuk_gratifikasi')
+            ->where('bentuk_gratifikasi', '!=', '')
+            ->select('bentuk_gratifikasi', DB::raw('COUNT(*) as total'))
+            ->groupBy('bentuk_gratifikasi')
+            ->orderByDesc('total')
+            ->take(8)
+            ->get();
+
+        $labelBentukGratifikasi = $bentukGratifikasiChart->pluck('bentuk_gratifikasi');
+        $dataBentukGratifikasi = $bentukGratifikasiChart->pluck('total');
         $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
 
         return view('admin.statistik', compact(
@@ -156,8 +156,8 @@ class DashboardController extends Controller
             'dataDosen',
             'labelHari',
             'dataHari',
-            'labelBukti',
-            'dataBukti',
+            'labelBentukGratifikasi',
+            'dataBentukGratifikasi',
             'kegiatans'
         ));
     }
