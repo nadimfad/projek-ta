@@ -12,14 +12,21 @@ use Illuminate\View\View;
 
 class UserManagementController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $users = User::with('dosen')
+            ->leftJoin('dosens', 'users.username', '=', 'dosens.nip')
+            ->select('users.*')
             ->where('role', 'dosen')
-            ->latest()
-            ->paginate(5);
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('dosens.nama', 'like', '%'.$request->search.'%');
+            })
+            ->orderBy('dosens.nama')
+            ->orderBy('users.username')
+            ->paginate(5)
+            ->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.manajemenuser', compact('users'));
     }
 
     public function store(Request $request): RedirectResponse

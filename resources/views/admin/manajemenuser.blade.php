@@ -18,6 +18,31 @@
     </div>
 
     <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+        <div class="border-b border-gray-100 px-5 py-4">
+            <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="relative flex-1">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Cari nama dosen..."
+                        class="w-full rounded-xl border-gray-200 bg-gray-50 py-3 pl-12 pr-4 text-sm text-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
+                        Cari
+                    </button>
+
+                    @if (request('search'))
+                        <a href="{{ route('admin.users.index') }}" class="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
+
         <div class="overflow-x-auto">
             <table class="w-full min-w-[820px] text-center text-sm">
                 <thead class="bg-gray-50 text-[11px] uppercase tracking-widest text-gray-400">
@@ -66,7 +91,9 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="py-12 text-center text-gray-400">Belum ada akun dosen.</td>
+                        <td colspan="5" class="py-12 text-center text-gray-400">
+                            {{ request('search') ? 'Nama dosen tidak ditemukan.' : 'Belum ada akun dosen.' }}
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
