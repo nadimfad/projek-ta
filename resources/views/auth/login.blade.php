@@ -128,6 +128,29 @@
 
             </div>
 
+            <!-- LOGIN ROLE -->
+            <div>
+                <label class="text-sm font-medium text-gray-500">
+                    Masuk Sebagai
+                </label>
+
+                <div class="mt-2 grid grid-cols-2 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="login_as" value="dosen" class="peer sr-only" {{ old('login_as', 'dosen') === 'dosen' ? 'checked' : '' }}>
+                        <span class="flex items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-600 transition peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">
+                            Dosen
+                        </span>
+                    </label>
+
+                    <label class="cursor-pointer">
+                        <input type="radio" name="login_as" value="kajur" class="peer sr-only" {{ old('login_as') === 'kajur' ? 'checked' : '' }}>
+                        <span class="flex items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-600 transition peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">
+                            Kajur
+                        </span>
+                    </label>
+                </div>
+            </div>
+
             <!-- BUTTON -->
             <button type="submit"
                 class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-3 rounded-2xl font-semibold shadow-lg hover:shadow-indigo-300/50 hover:scale-[1.02] transition duration-300">

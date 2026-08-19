@@ -30,6 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
+            'login_as' => ['nullable', 'in:dosen,kajur'],
         ];
     }
 
@@ -54,6 +55,26 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 'username' => trans('auth.failed'),
             ]);
+        }
+
+        $requestedRole = $this->input('login_as');
+        $userRole = Auth::user()->role;
+
+        if ($userRole === 'kajur') {
+            $this->session()->put('active_role', $requestedRole ?: 'kajur');
+        } elseif ($userRole === 'dosen') {
+            if ($requestedRole === 'kajur') {
+                Auth::logout();
+                RateLimiter::hit($this->throttleKey());
+
+                throw ValidationException::withMessages([
+                    'username' => 'Akun dosen tidak memiliki akses sebagai kajur.',
+                ]);
+            }
+
+            $this->session()->put('active_role', 'dosen');
+        } else {
+            $this->session()->put('active_role', $userRole);
         }
 
         RateLimiter::clear($this->throttleKey());

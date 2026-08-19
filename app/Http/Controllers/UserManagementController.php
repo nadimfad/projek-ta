@@ -17,7 +17,7 @@ class UserManagementController extends Controller
         $users = User::with('dosen')
             ->leftJoin('dosens', 'users.username', '=', 'dosens.nip')
             ->select('users.*')
-            ->where('role', 'dosen')
+            ->whereIn('role', ['dosen', 'kajur'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $query->where('dosens.nama', 'like', '%'.$request->search.'%');
             })
@@ -35,6 +35,7 @@ class UserManagementController extends Controller
             'nama' => ['required', 'string', 'max:255', Rule::unique('dosens', 'nama')],
             'nip' => ['required', 'string', 'max:50', Rule::unique('dosens', 'nip'), Rule::unique('users', 'username')],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('dosens', 'email')],
+            'role' => ['required', Rule::in(['dosen', 'kajur'])],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'nama.unique' => 'Nama dosen sudah terdaftar.',
@@ -51,7 +52,7 @@ class UserManagementController extends Controller
         User::create([
             'username' => $data['nip'],
             'password' => Hash::make($data['password']),
-            'role' => 'dosen',
+            'role' => $data['role'],
         ]);
 
         return back()->with('success', 'Akun dosen berhasil dibuat.');
@@ -79,6 +80,7 @@ class UserManagementController extends Controller
                 'email',
                 Rule::unique('dosens', 'email')->ignore($user->dosen?->id_dosen, 'id_dosen'),
             ],
+            'role' => ['required', Rule::in(['dosen', 'kajur'])],
         ], [
             'nama.unique' => 'Nama dosen sudah terdaftar.',
             'nip.unique' => 'NIP dosen sudah terdaftar.',
@@ -98,6 +100,7 @@ class UserManagementController extends Controller
 
         $user->update([
             'username' => $data['nip'],
+            'role' => $data['role'],
         ]);
 
         return redirect()

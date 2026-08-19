@@ -43,7 +43,7 @@ class LaporanController extends Controller
             });
         }
 
-        if (auth()->user()->role === 'admin') {
+        if (in_array(session('active_role', auth()->user()->role), ['admin', 'kajur'], true)) {
             $laporans = $query
                 ->latest()
                 ->paginate(20)

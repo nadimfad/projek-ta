@@ -31,7 +31,7 @@
 
     <nav class="flex-1 px-4 space-y-1">
         
-        @if(auth()->user()->role == 'admin')
+        @if(in_array(session('active_role', auth()->user()->role), ['admin', 'kajur'], true))
         <a href="{{ route('dashboard') }}"
            class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,7 +41,7 @@
         </a>
         @endif
 
-        <a href="{{ auth()->user()->role == 'admin' ? route('admin.laporan.index') : route('laporan.index') }}"
+        <a href="{{ in_array(session('active_role', auth()->user()->role), ['admin', 'kajur'], true) ? route('admin.laporan.index') : route('laporan.index') }}"
            class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('laporan.*') || request()->routeIs('admin.laporan.*') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -49,7 +49,7 @@
             Laporan
         </a>
 
-        @if(auth()->user()->role == 'dosen')
+        @if(session('active_role', auth()->user()->role) == 'dosen')
         <a href="{{ route('laporan.history') }}"
            class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('laporan.history') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,7 +67,9 @@
             </svg>
             Manajemen User
         </a>
+        @endif
 
+        @if(in_array(session('active_role', auth()->user()->role), ['admin', 'kajur'], true))
         <a href="{{ route('admin.statistik') }}"
            class="flex items-center gap-4 px-4 py-3 rounded-xl transition font-medium {{ request()->routeIs('admin.statistik') ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50' }}">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -140,7 +142,7 @@
                     @yield('title', 'Pusat Kendali Laporan')
                 </h1>
                 <p class="text-sm text-gray-400 mt-1">
-                    {{ auth()->user()->role == 'admin' ? 'Selamat bertugas, Administrator.' : 'Pantau dan kelola laporan Anda.' }}
+                    {{ session('active_role', auth()->user()->role) == 'admin' ? 'Selamat bertugas, Administrator.' : (session('active_role', auth()->user()->role) == 'kajur' ? 'Pantau laporan dan statistik jurusan.' : 'Pantau dan kelola laporan Anda.') }}
                 </p>
             </div>
         </div>

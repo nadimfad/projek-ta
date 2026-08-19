@@ -12,7 +12,7 @@ Route::get('/', function () {
 });
 
 Route::get('/redirect', function () {
-    if (Auth::user()->role == 'admin') {
+    if (in_array(session('active_role', Auth::user()->role), ['admin', 'kajur'], true)) {
         return redirect('/dashboard');
     }
 
@@ -25,7 +25,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/history', [LaporanController::class, 'history'])->name('laporan.history');
     });
 
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['role:admin,kajur'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/dosen-pelapor', [DashboardController::class, 'dosenPelapor'])->name('dashboard.dosen-pelapor');
@@ -34,6 +34,12 @@ Route::middleware(['role:admin'])->group(function () {
 
     Route::get('/admin/statistik', [DashboardController::class, 'statistik'])->name('admin.statistik');
 
+    Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
+
+    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
+});
+
+Route::middleware(['role:admin'])->group(function () {
     // USER MANAGEMENT
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
 
@@ -42,10 +48,6 @@ Route::middleware(['role:admin'])->group(function () {
     Route::put('/admin/users/{user}', [UserManagementController::class, 'update'])->name('admin.users.update');
 
     Route::delete('/admin/users/{user}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy');
-
-    Route::put('/laporan/{id}', [LaporanController::class, 'update'])->name('laporan.update');
-
-    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
 });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

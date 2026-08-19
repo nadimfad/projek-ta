@@ -50,6 +50,7 @@
                         <th class="px-6 py-4 text-center font-semibold">Nama</th>
                         <th class="px-6 py-4 text-center font-semibold">NIP</th>
                         <th class="px-6 py-4 text-center font-semibold">Email</th>
+                        <th class="px-6 py-4 text-center font-semibold">Role</th>
                         <th class="px-6 py-4 text-center font-semibold">Dibuat</th>
                         <th class="px-6 py-4 text-center font-semibold">Aksi</th>
                     </tr>
@@ -61,6 +62,11 @@
                         <td class="px-6 py-5 align-middle font-semibold text-gray-700">{{ $user->dosen?->nama ?? '-' }}</td>
                         <td class="px-6 py-5 align-middle text-gray-500">{{ $user->dosen?->nip ?? $user->username }}</td>
                         <td class="px-6 py-5 align-middle text-gray-500">{{ $user->dosen?->email ?? '-' }}</td>
+                        <td class="px-6 py-5 align-middle">
+                            <span class="inline-flex rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wide {{ $user->role === 'kajur' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600' }}">
+                                {{ $user->role === 'kajur' ? 'Dosen + Kajur' : 'Dosen' }}
+                            </span>
+                        </td>
                         <td class="px-6 py-5 align-middle text-gray-400">{{ $user->created_at->format('d M Y') }}</td>
                         <td class="px-6 py-5 align-middle">
                             @php
@@ -69,6 +75,7 @@
                                     'nama' => $user->dosen?->nama ?? '',
                                     'nip' => $user->dosen?->nip ?? $user->username,
                                     'email' => $user->dosen?->email ?? '',
+                                    'role' => $user->role,
                                 ];
                             @endphp
                             <div class="flex items-center justify-center gap-2">
@@ -91,7 +98,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="py-12 text-center text-gray-400">
+                        <td colspan="6" class="py-12 text-center text-gray-400">
                             {{ request('search') ? 'Nama dosen tidak ditemukan.' : 'Belum ada akun dosen.' }}
                         </td>
                     </tr>
@@ -177,6 +184,15 @@
                         @error('password') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
 
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Role Akun</label>
+                        <select name="role" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                            <option value="dosen" {{ old('role', 'dosen') === 'dosen' ? 'selected' : '' }}>Dosen</option>
+                            <option value="kajur" {{ old('role') === 'kajur' ? 'selected' : '' }}>Dosen + Kajur</option>
+                        </select>
+                        @error('role') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
                     <div class="sm:col-span-2">
                         <label class="mb-2 block text-sm font-semibold text-gray-600">Konfirmasi Password</label>
                         <input type="password" name="password_confirmation" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
@@ -223,6 +239,14 @@
                 <div>
                     <label class="mb-2 block text-sm font-semibold text-gray-600">Email</label>
                     <input type="email" name="email" id="editEmail" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                </div>
+
+                <div>
+                    <label class="mb-2 block text-sm font-semibold text-gray-600">Role Akun</label>
+                    <select name="role" id="editRole" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        <option value="dosen">Dosen</option>
+                        <option value="kajur">Dosen + Kajur</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700">
@@ -277,6 +301,7 @@
         document.getElementById('editNama').value = data.nama ?? '';
         document.getElementById('editNip').value = data.nip ?? '';
         document.getElementById('editEmail').value = data.email ?? '';
+        document.getElementById('editRole').value = data.role ?? 'dosen';
         document.getElementById('editForm').action = `/admin/users/${data.id}`;
         editModal.classList.remove('hidden');
         editModal.classList.add('flex');

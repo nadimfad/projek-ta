@@ -28,9 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (auth()->user()->role == 'admin') {
+        $userRole = auth()->user()->role;
+        $requestedRole = $request->input('login_as');
+        $activeRole = $userRole === 'kajur'
+            ? ($requestedRole ?: 'kajur')
+            : $userRole;
+
+        $request->session()->put('active_role', $activeRole);
+
+        if (in_array($activeRole, ['admin', 'kajur'], true)) {
             return redirect()->route('dashboard')
-                ->with('success', 'Selamat datang Admin.');
+                ->with('success', $activeRole === 'kajur' ? 'Selamat datang Kajur.' : 'Selamat datang Admin.');
         }
 
         return redirect()->route('laporan.index')

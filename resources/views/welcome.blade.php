@@ -31,7 +31,7 @@
 
             @auth
 
-    @if(auth()->user()->role == 'admin')
+    @if(in_array(session('active_role', auth()->user()->role), ['admin', 'kajur'], true))
 
         <a href="{{ route('dashboard') }}"
            class="bg-indigo-600 text-white px-5 py-2 rounded-full hover:bg-indigo-700 transition">
@@ -86,7 +86,7 @@
 
             @auth
 
-    @if(auth()->user()->role == 'admin')
+    @if(in_array(session('active_role', auth()->user()->role), ['admin', 'kajur'], true))
 
         <a href="{{ route('dashboard') }}"
            class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 hover:bg-indigo-700 transition">

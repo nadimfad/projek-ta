@@ -42,14 +42,14 @@ class User extends Authenticatable
 
     public function getNameAttribute(): string
     {
-        return $this->role === 'dosen'
+        return in_array($this->role, ['dosen', 'kajur'], true)
             ? ($this->dosen?->nama ?? $this->username)
             : ($this->admin?->username_admin ?? $this->username);
     }
 
     public function getEmailAttribute(): ?string
     {
-        return $this->role === 'dosen'
+        return in_array($this->role, ['dosen', 'kajur'], true)
             ? $this->dosen?->email
             : $this->admin?->email;
     }
