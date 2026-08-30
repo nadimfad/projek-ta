@@ -36,6 +36,7 @@ class UserManagementController extends Controller
             'nip' => ['required', 'string', 'max:50', Rule::unique('dosens', 'nip'), Rule::unique('users', 'username')],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('dosens', 'email')],
             'role' => ['required', Rule::in(['dosen', 'kajur'])],
+            'status' => ['required', Rule::in(['aktif', 'non_aktif', 'cuti'])],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'nama.unique' => 'Nama dosen sudah terdaftar.',
@@ -47,6 +48,7 @@ class UserManagementController extends Controller
             'nip' => $data['nip'],
             'nama' => $data['nama'],
             'email' => $data['email'],
+            'status' => $data['status'],
         ]);
 
         User::create([
@@ -81,6 +83,7 @@ class UserManagementController extends Controller
                 Rule::unique('dosens', 'email')->ignore($user->dosen?->id_dosen, 'id_dosen'),
             ],
             'role' => ['required', Rule::in(['dosen', 'kajur'])],
+            'status' => ['required', Rule::in(['aktif', 'non_aktif', 'cuti'])],
         ], [
             'nama.unique' => 'Nama dosen sudah terdaftar.',
             'nip.unique' => 'NIP dosen sudah terdaftar.',
@@ -95,6 +98,7 @@ class UserManagementController extends Controller
                 'nip' => $data['nip'],
                 'nama' => $data['nama'],
                 'email' => $data['email'],
+                'status' => $data['status'],
             ]
         );
 

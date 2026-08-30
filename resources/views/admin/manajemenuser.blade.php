@@ -44,13 +44,14 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[820px] text-center text-sm">
+            <table class="w-full min-w-[960px] text-center text-sm">
                 <thead class="bg-gray-50 text-[11px] uppercase tracking-widest text-gray-400">
                     <tr>
                         <th class="px-6 py-4 text-center font-semibold">Nama</th>
                         <th class="px-6 py-4 text-center font-semibold">NIP</th>
                         <th class="px-6 py-4 text-center font-semibold">Email</th>
                         <th class="px-6 py-4 text-center font-semibold">Role</th>
+                        <th class="px-6 py-4 text-center font-semibold">Status</th>
                         <th class="px-6 py-4 text-center font-semibold">Dibuat</th>
                         <th class="px-6 py-4 text-center font-semibold">Aksi</th>
                     </tr>
@@ -67,6 +68,26 @@
                                 {{ $user->role === 'kajur' ? 'Dosen + Kajur' : 'Dosen' }}
                             </span>
                         </td>
+                        <td class="px-6 py-5 align-middle">
+                            @php
+                                $statusDosen = $user->dosen?->status ?? 'aktif';
+                                $warnaStatus = match ($statusDosen) {
+                                    'aktif' => 'bg-green-100 text-green-700',
+                                    'non_aktif' => 'bg-red-100 text-red-700',
+                                    'cuti' => 'bg-amber-100 text-amber-700',
+                                    default => 'bg-gray-100 text-gray-600',
+                                };
+                                $labelStatus = match ($statusDosen) {
+                                    'aktif' => 'Aktif',
+                                    'non_aktif' => 'Non Aktif',
+                                    'cuti' => 'Cuti',
+                                    default => 'Aktif',
+                                };
+                            @endphp
+                            <span class="inline-flex rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wide {{ $warnaStatus }}">
+                                {{ $labelStatus }}
+                            </span>
+                        </td>
                         <td class="px-6 py-5 align-middle text-gray-400">{{ $user->created_at->format('d M Y') }}</td>
                         <td class="px-6 py-5 align-middle">
                             @php
@@ -76,6 +97,7 @@
                                     'nip' => $user->dosen?->nip ?? $user->username,
                                     'email' => $user->dosen?->email ?? '',
                                     'role' => $user->role,
+                                    'status' => $user->dosen?->status ?? 'aktif',
                                 ];
                             @endphp
                             <div class="flex items-center justify-center gap-2">
@@ -98,7 +120,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="py-12 text-center text-gray-400">
+                        <td colspan="7" class="py-12 text-center text-gray-400">
                             {{ request('search') ? 'Nama dosen tidak ditemukan.' : 'Belum ada akun dosen.' }}
                         </td>
                     </tr>
@@ -179,12 +201,6 @@
                     </div>
 
                     <div>
-                        <label class="mb-2 block text-sm font-semibold text-gray-600">Password</label>
-                        <input type="password" name="password" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
-                        @error('password') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
                         <label class="mb-2 block text-sm font-semibold text-gray-600">Role Akun</label>
                         <select name="role" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
                             <option value="dosen" {{ old('role', 'dosen') === 'dosen' ? 'selected' : '' }}>Dosen</option>
@@ -192,6 +208,24 @@
                         </select>
                         @error('role') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
+
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Status Akun</label>
+                        <select name="status" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                            <option value="aktif" {{ old('status', 'aktif') === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                            <option value="non_aktif" {{ old('status') === 'non_aktif' ? 'selected' : '' }}>Non Aktif</option>
+                            <option value="cuti" {{ old('status') === 'cuti' ? 'selected' : '' }}>Cuti</option>
+                        </select>
+                        @error('status') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+                    
+                    <div>
+                        <label class="mb-2 block text-sm font-semibold text-gray-600">Password</label>
+                        <input type="password" name="password" class="w-full rounded-xl border-gray-200 bg-white px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        @error('password') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+
+                    
 
                     <div class="sm:col-span-2">
                         <label class="mb-2 block text-sm font-semibold text-gray-600">Konfirmasi Password</label>
@@ -249,6 +283,15 @@
                     </select>
                 </div>
 
+                <div>
+                    <label class="mb-2 block text-sm font-semibold text-gray-600">Status Akun</label>
+                    <select name="status" id="editStatus" class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 focus:border-blue-500 focus:ring-blue-500" required>
+                        <option value="aktif">Aktif</option>
+                        <option value="non_aktif">Non Aktif</option>
+                        <option value="cuti">Cuti</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700">
                     Update Data
                 </button>
@@ -302,6 +345,7 @@
         document.getElementById('editNip').value = data.nip ?? '';
         document.getElementById('editEmail').value = data.email ?? '';
         document.getElementById('editRole').value = data.role ?? 'dosen';
+        document.getElementById('editStatus').value = data.status ?? 'aktif';
         document.getElementById('editForm').action = `/admin/users/${data.id}`;
         editModal.classList.remove('hidden');
         editModal.classList.add('flex');

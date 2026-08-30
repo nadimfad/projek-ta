@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('nip')->unique();
             $table->string('nama');
             $table->string('email')->unique();
+            $table->enum('status', ['aktif', 'non_aktif', 'cuti'])->default('aktif');
             $table->timestamps();
         });
     }
