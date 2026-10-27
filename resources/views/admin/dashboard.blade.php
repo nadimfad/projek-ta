@@ -41,6 +41,28 @@
         </div>
     </div>
 
+    <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+        <div class="mb-4">
+            <h3 class="text-base font-bold text-gray-800">Status Dosen</h3>
+            <p class="mt-1 text-sm text-gray-400">Jumlah dosen berdasarkan status akun saat ini.</p>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-3">
+            <div class="flex items-center justify-between rounded-xl bg-green-50 px-4 py-3">
+                <span class="text-sm font-semibold text-green-700">Aktif</span>
+                <span class="text-xl font-bold text-green-700">{{ number_format($totalDosenAktif) }}</span>
+            </div>
+            <div class="flex items-center justify-between rounded-xl bg-gray-100 px-4 py-3">
+                <span class="text-sm font-semibold text-gray-600">Non Aktif</span>
+                <span class="text-xl font-bold text-gray-700">{{ number_format($totalDosenNonAktif) }}</span>
+            </div>
+            <div class="flex items-center justify-between rounded-xl bg-yellow-50 px-4 py-3">
+                <span class="text-sm font-semibold text-yellow-700">Cuti</span>
+                <span class="text-xl font-bold text-yellow-700">{{ number_format($totalDosenCuti) }}</span>
+            </div>
+        </div>
+    </section>
+
     <div class="grid gap-6 xl:grid-cols-[1.7fr_0.9fr]">
         <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div class="mb-6 flex items-start justify-between gap-4">

@@ -62,6 +62,9 @@ class DashboardController extends Controller
         $totalAdmin = Admin::count();
         $totalDosen = Dosen::count();
         $totalPengguna = User::count();
+        $totalDosenAktif = Dosen::where('status', 'aktif')->count();
+        $totalDosenNonAktif = Dosen::where('status', 'non_aktif')->count();
+        $totalDosenCuti = Dosen::where('status', 'cuti')->count();
 
         return view('admin.dashboard', compact(
             'totalLaporan',
@@ -74,7 +77,10 @@ class DashboardController extends Controller
             'dosenPelapor',
             'totalAdmin',
             'totalDosen',
-            'totalPengguna'
+            'totalPengguna',
+            'totalDosenAktif',
+            'totalDosenNonAktif',
+            'totalDosenCuti'
         ));
     }
 
