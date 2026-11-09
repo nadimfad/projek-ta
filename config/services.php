@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'academic_submission' => [
+        'url' => env('ACADEMIC_SUBMISSION_API_URL'),
+        'key' => env('ACADEMIC_SUBMISSION_API_KEY'),
+    ],
+
 ];

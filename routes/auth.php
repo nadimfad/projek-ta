@@ -36,6 +36,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('login/pilih-peran', [AuthenticatedSessionController::class, 'showRoleSelection'])
+                ->name('login.role-selection');
+
+    Route::post('login/pilih-peran', [AuthenticatedSessionController::class, 'selectRole'])
+                ->name('login.role-selection.store');
+
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');
 

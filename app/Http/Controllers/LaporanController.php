@@ -6,15 +6,27 @@ use App\Models\BuktiLaporan;
 use App\Models\Dosen;
 use App\Models\Kegiatan;
 use App\Models\Laporan;
+use App\Services\AcademicSubmissionService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class LaporanController extends Controller
 {
+    private const BENTUK_GRATIFIKASI = [
+        'Uang',
+        'Barang',
+        'Makanan / Minuman',
+        'Voucher / Diskon',
+        'Fasilitas / Akomodasi',
+        'Lainnya',
+    ];
+
     public function index(Request $request)
     {
         $query = Laporan::with([
@@ -64,15 +76,31 @@ class LaporanController extends Controller
             ->limit(4)
             ->get();
         $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
+        $bentukGratifikasiOptions = self::BENTUK_GRATIFIKASI;
 
-        return view('laporan.index', compact('laporans', 'kegiatans'));
+        return view('laporan.index', compact('laporans', 'kegiatans', 'bentukGratifikasiOptions'));
     }
 
     public function create()
     {
-        $kegiatans = Kegiatan::orderBy('jenis_kegiatan')->get();
+        return redirect()->route('laporan.index', ['create' => 1]);
+    }
 
-        return view('laporan.create', compact('kegiatans'));
+    public function academicSubmissions(Request $request, AcademicSubmissionService $academicSubmissionService): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        try {
+            return response()->json([
+                'data' => $academicSubmissionService->search($data['name']),
+            ]);
+        } catch (\RuntimeException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], 502);
+        }
     }
 
     public function store(Request $request)
@@ -85,7 +113,11 @@ class LaporanController extends Controller
             'id_kegiatan' => ['required', 'exists:kegiatans,id_kegiatan'],
             'nama_mahasiswa' => ['required', 'string', 'max:255'],
             'nim_mahasiswa' => ['required', 'string', 'max:50'],
-            'bentuk_gratifikasi' => ['required', 'string', 'max:255'],
+            'dosen_pembimbing_1' => ['nullable', 'string', 'max:255'],
+            'dosen_pembimbing_2' => ['nullable', 'string', 'max:255'],
+            'dosen_penguji_1' => ['nullable', 'string', 'max:255'],
+            'dosen_penguji_2' => ['nullable', 'string', 'max:255'],
+            'bentuk_gratifikasi' => ['required', Rule::in(self::BENTUK_GRATIFIKASI)],
             'tanggal_kegiatan' => ['nullable', 'date'],
             'keterangan' => ['required', 'string'],
             'fotos' => ['required', 'array', 'min:1'],
@@ -226,7 +258,7 @@ class LaporanController extends Controller
             'id_kegiatan' => ['required', 'exists:kegiatans,id_kegiatan'],
             'nama_mahasiswa' => ['required', 'string', 'max:255'],
             'nim_mahasiswa' => ['required', 'string', 'max:50'],
-            'bentuk_gratifikasi' => ['required', 'string', 'max:255'],
+            'bentuk_gratifikasi' => ['required', Rule::in(self::BENTUK_GRATIFIKASI)],
             'tanggal_kegiatan' => ['required', 'date'],
             'keterangan' => ['nullable', 'string'],
         ]);

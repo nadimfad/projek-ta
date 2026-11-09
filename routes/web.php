@@ -21,6 +21,9 @@ Route::get('/redirect', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:dosen'])->group(function () {
+        Route::get('/laporan/data-akademik', [LaporanController::class, 'academicSubmissions'])
+            ->name('laporan.academic-submissions');
+
         Route::resource('laporan', LaporanController::class)->except(['show', 'edit', 'update']);
         Route::get('/history', [LaporanController::class, 'history'])->name('laporan.history');
     });

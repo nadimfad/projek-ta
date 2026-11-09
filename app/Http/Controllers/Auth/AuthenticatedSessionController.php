@@ -29,10 +29,14 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $userRole = auth()->user()->role;
-        $requestedRole = $request->input('login_as');
-        $activeRole = $userRole === 'kajur'
-            ? ($requestedRole ?: 'kajur')
-            : $userRole;
+
+        if ($userRole === 'kajur') {
+            $request->session()->put('active_role', 'pending');
+
+            return redirect()->route('login.role-selection');
+        }
+
+        $activeRole = $userRole;
 
         $request->session()->put('active_role', $activeRole);
 
@@ -43,6 +47,38 @@ class AuthenticatedSessionController extends Controller
 
         return redirect()->route('laporan.index')
             ->with('success', 'Login berhasil.');
+    }
+
+    /**
+     * Display the role selector for an authenticated department head.
+     */
+    public function showRoleSelection(): View|RedirectResponse
+    {
+        if (auth()->user()->role !== 'kajur') {
+            return redirect()->route('redirect');
+        }
+
+        return view('auth.role-selection');
+    }
+
+    /**
+     * Store the active role selected by a department head.
+     */
+    public function selectRole(Request $request): RedirectResponse
+    {
+        abort_unless(auth()->user()->role === 'kajur', 403);
+
+        $data = $request->validate([
+            'login_as' => ['required', 'in:dosen,kajur'],
+        ]);
+
+        $request->session()->put('active_role', $data['login_as']);
+
+        if ($data['login_as'] === 'kajur') {
+            return redirect()->route('dashboard')->with('success', 'Selamat datang Kajur.');
+        }
+
+        return redirect()->route('laporan.index')->with('success', 'Login sebagai dosen berhasil.');
     }
 
     /**

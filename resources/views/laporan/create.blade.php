@@ -90,7 +90,12 @@
                 <div class="grid sm:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-bold tracking-wider uppercase text-slate-400 mb-3">Bentuk Gratifikasi</label>
-                        <input type="text" name="bentuk_gratifikasi" value="{{ old('bentuk_gratifikasi') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500" required>
+                        <select name="bentuk_gratifikasi" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            <option value="">Pilih bentuk gratifikasi</option>
+                            @foreach ($bentukGratifikasiOptions as $bentukGratifikasi)
+                                <option value="{{ $bentukGratifikasi }}" @selected(old('bentuk_gratifikasi') === $bentukGratifikasi)>{{ $bentukGratifikasi }}</option>
+                            @endforeach
+                        </select>
                         @error('bentuk_gratifikasi') <p class="text-sm text-red-500 mt-2">{{ $message }}</p> @enderror
                     </div>
 

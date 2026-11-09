@@ -154,6 +154,20 @@
             @csrf
 
             <div id="reportStep1" class="report-step space-y-6">
+                <div class="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 sm:p-5">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+                        <div class="flex-1">
+                            <label for="academicSearchInput" class="mb-2 block text-sm font-bold text-blue-800">Ambil Data Akademik</label>
+                            <input id="academicSearchInput" type="search" autocomplete="off" placeholder="Ketik nama mahasiswa" class="w-full rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button id="academicSearchButton" type="button" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60">
+                            Cari Data
+                        </button>
+                    </div>
+                    <p id="academicSearchStatus" class="mt-3 hidden text-sm"></p>
+                    <div id="academicSearchResults" class="mt-3 hidden space-y-2"></div>
+                </div>
+
                 <div class="grid gap-5 md:grid-cols-2">
                     <div>
                         <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Nama Dosen</label>
@@ -167,14 +181,33 @@
 
                     <div>
                         <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Nama Mahasiswa</label>
-                        <input type="text" name="nama_mahasiswa" value="{{ old('nama_mahasiswa') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <input id="namaMahasiswaInput" type="text" name="nama_mahasiswa" value="{{ old('nama_mahasiswa') }}" readonly placeholder="Terisi setelah memilih data akademik" class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none" required>
                         @error('nama_mahasiswa') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">NIM Mahasiswa</label>
-                        <input type="text" name="nim_mahasiswa" value="{{ old('nim_mahasiswa') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <input id="nimMahasiswaInput" type="text" name="nim_mahasiswa" value="{{ old('nim_mahasiswa') }}" readonly placeholder="Terisi setelah memilih data akademik" class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none" required>
                         @error('nim_mahasiswa') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="grid gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Dosen Pembimbing 1</label>
+                        <input id="pembimbing1Input" type="text" name="dosen_pembimbing_1" value="{{ old('dosen_pembimbing_1') }}" readonly placeholder="Terisi dari data akademik" class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Dosen Pembimbing 2</label>
+                        <input id="pembimbing2Input" type="text" name="dosen_pembimbing_2" value="{{ old('dosen_pembimbing_2') }}" readonly placeholder="Terisi dari data akademik" class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Dosen Penguji 1</label>
+                        <input id="penguji1Input" type="text" name="dosen_penguji_1" value="{{ old('dosen_penguji_1') }}" readonly placeholder="Terisi dari data akademik" class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Dosen Penguji 2</label>
+                        <input id="penguji2Input" type="text" name="dosen_penguji_2" value="{{ old('dosen_penguji_2') }}" readonly placeholder="Terisi dari data akademik" class="w-full cursor-not-allowed rounded-2xl border border-slate-200 bg-slate-100 px-5 py-4 text-slate-500 outline-none">
                     </div>
                 </div>
             </div>
@@ -196,7 +229,12 @@
                 <div class="grid gap-5 md:grid-cols-2">
                     <div>
                         <label class="mb-2 block text-sm font-bold uppercase tracking-wide text-slate-400">Bentuk Gratifikasi</label>
-                        <input type="text" name="bentuk_gratifikasi" value="{{ old('bentuk_gratifikasi') }}" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <select name="bentuk_gratifikasi" class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Pilih bentuk gratifikasi</option>
+                            @foreach ($bentukGratifikasiOptions as $bentukGratifikasi)
+                                <option value="{{ $bentukGratifikasi }}" @selected(old('bentuk_gratifikasi') === $bentukGratifikasi)>{{ $bentukGratifikasi }}</option>
+                            @endforeach
+                        </select>
                         @error('bentuk_gratifikasi') <p class="mt-2 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
 
@@ -273,6 +311,16 @@
     const prevReportStepButton = document.getElementById('prevReportStepButton');
     const nextReportStepButton = document.getElementById('nextReportStepButton');
     const submitReportButton = document.getElementById('submitReportButton');
+    const academicSearchInput = document.getElementById('academicSearchInput');
+    const academicSearchButton = document.getElementById('academicSearchButton');
+    const academicSearchStatus = document.getElementById('academicSearchStatus');
+    const academicSearchResults = document.getElementById('academicSearchResults');
+    const namaMahasiswaInput = document.getElementById('namaMahasiswaInput');
+    const nimMahasiswaInput = document.getElementById('nimMahasiswaInput');
+    const pembimbing1Input = document.getElementById('pembimbing1Input');
+    const pembimbing2Input = document.getElementById('pembimbing2Input');
+    const penguji1Input = document.getElementById('penguji1Input');
+    const penguji2Input = document.getElementById('penguji2Input');
     const reportPhotoInput = document.getElementById('reportPhotoInput');
     const reportPhotoStatus = document.getElementById('reportPhotoStatus');
     const maxPhotoBytes = 2 * 1024 * 1024;
@@ -335,6 +383,123 @@
             showReportStep(currentReportStep - 1);
         }
     }
+
+    function updateAcademicSearchStatus(message = '', type = 'info') {
+        academicSearchStatus.textContent = message;
+        academicSearchStatus.classList.toggle('hidden', message === '');
+        academicSearchStatus.classList.toggle('text-blue-700', type === 'info');
+        academicSearchStatus.classList.toggle('text-green-700', type === 'success');
+        academicSearchStatus.classList.toggle('text-red-600', type === 'error');
+    }
+
+    function clearAcademicSearchResults() {
+        academicSearchResults.replaceChildren();
+        academicSearchResults.classList.add('hidden');
+    }
+
+    function fillAcademicData(record) {
+        namaMahasiswaInput.value = record.nama_mahasiswa || '';
+        nimMahasiswaInput.value = record.nim_mahasiswa || '';
+        pembimbing1Input.value = record.dosen_pembimbing_1 || '';
+        pembimbing2Input.value = record.dosen_pembimbing_2 || '';
+        penguji1Input.value = record.dosen_penguji_1 || '';
+        penguji2Input.value = record.dosen_penguji_2 || '';
+
+        if (record.jenis_kegiatan) {
+            const kegiatanSelect = createReportForm.querySelector('[name="id_kegiatan"]');
+            const option = Array.from(kegiatanSelect.options).find((item) => item.textContent.trim() === record.jenis_kegiatan);
+
+            if (option) {
+                kegiatanSelect.value = option.value;
+            }
+        }
+
+        clearAcademicSearchResults();
+        updateAcademicSearchStatus('Data akademik berhasil diterapkan ke formulir.', 'success');
+    }
+
+    function displayAcademicSearchResults(records) {
+        clearAcademicSearchResults();
+
+        if (records.length === 0) {
+            updateAcademicSearchStatus('Data mahasiswa tidak ditemukan.', 'info');
+            return;
+        }
+
+        const heading = document.createElement('p');
+        heading.className = 'text-xs font-semibold text-slate-500';
+        heading.textContent = 'Pilih data mahasiswa yang sesuai:';
+        academicSearchResults.appendChild(heading);
+
+        records.forEach((record) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50';
+
+            const text = document.createElement('span');
+            text.className = 'min-w-0';
+            const name = document.createElement('span');
+            name.className = 'block truncate text-sm font-semibold text-slate-700';
+            name.textContent = record.nama_mahasiswa || 'Mahasiswa tanpa nama';
+            const nim = document.createElement('span');
+            nim.className = 'mt-1 block text-xs text-slate-500';
+            nim.textContent = record.nim_mahasiswa || 'NIM tidak tersedia';
+            text.append(name, nim);
+
+            const activity = document.createElement('span');
+            activity.className = 'shrink-0 rounded-lg bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700';
+            activity.textContent = record.jenis_kegiatan || 'Kegiatan belum dikenali';
+
+            button.append(text, activity);
+            button.addEventListener('click', () => fillAcademicData(record));
+            academicSearchResults.appendChild(button);
+        });
+
+        academicSearchResults.classList.remove('hidden');
+        updateAcademicSearchStatus(`${records.length} data ditemukan.`, 'info');
+    }
+
+    async function searchAcademicData() {
+        const name = academicSearchInput.value.trim();
+
+        if (name.length < 2) {
+            clearAcademicSearchResults();
+            updateAcademicSearchStatus('Masukkan minimal 2 karakter nama mahasiswa.', 'error');
+            academicSearchInput.focus();
+            return;
+        }
+
+        academicSearchButton.disabled = true;
+        academicSearchButton.textContent = 'Mencari...';
+        clearAcademicSearchResults();
+        updateAcademicSearchStatus('Menghubungkan ke data akademik...', 'info');
+
+        try {
+            const response = await fetch(`{{ route('laporan.academic-submissions') }}?name=${encodeURIComponent(name)}`, {
+                headers: { 'Accept': 'application/json' },
+            });
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(payload.message || 'Data akademik tidak dapat dimuat.');
+            }
+
+            displayAcademicSearchResults(payload.data || []);
+        } catch (error) {
+            updateAcademicSearchStatus(error.message || 'Data akademik tidak dapat dimuat.', 'error');
+        } finally {
+            academicSearchButton.disabled = false;
+            academicSearchButton.textContent = 'Cari Data';
+        }
+    }
+
+    academicSearchButton.addEventListener('click', searchAcademicData);
+    academicSearchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            searchAcademicData();
+        }
+    });
 
     function updatePhotoStatus(message = '', type = 'info') {
         reportPhotoStatus.textContent = message;
@@ -515,7 +680,9 @@
         }
     });
 
-    @if ($errors->has('id_kegiatan') || $errors->has('bentuk_gratifikasi') || $errors->has('tanggal_kegiatan'))
+    @if (request()->boolean('create'))
+        openCreateReportModal(1);
+    @elseif ($errors->has('id_kegiatan') || $errors->has('bentuk_gratifikasi') || $errors->has('tanggal_kegiatan'))
         openCreateReportModal(2);
     @elseif ($errors->has('fotos') || $errors->has('fotos.*') || $errors->has('keterangan'))
         openCreateReportModal(3);
