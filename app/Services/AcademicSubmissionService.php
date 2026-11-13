@@ -13,7 +13,8 @@ class AcademicSubmissionService
         $url = config('services.academic_submission.url');
         $apiKey = config('services.academic_submission.key');
         $startTime = config('services.academic_submission.start_time');
-        $endTime = config('services.academic_submission.end_time');
+        $endTime = config('services.academic_submission.end_time')
+            ?: now()->endOfDay()->format('Y-m-d H:i:s');
 
         if (blank($url) || blank($apiKey)) {
             throw new \RuntimeException('Koneksi data akademik belum dikonfigurasi. Hubungi administrator.');
@@ -34,7 +35,7 @@ class AcademicSubmissionService
         }
 
         if (! $response->successful()) {
-            throw new \RuntimeException('Server data akademik sedang bermasalah. Silakan coba lagi beberapa saat.');
+            throw new \RuntimeException($this->responseErrorMessage($response->status()));
         }
 
         $payload = $response->json();
@@ -45,7 +46,7 @@ class AcademicSubmissionService
 
         return collect($this->extractRecords($payload))
             ->filter(fn ($record) => is_array($record))
-            ->map(fn (array $record) => $this->normalizeRecord($record))
+            ->flatMap(fn (array $record) => $this->normalizeStudentRecord($record))
             ->filter(fn (array $record) => filled($record['nama_mahasiswa']) || filled($record['nim_mahasiswa']))
             ->take(10)
             ->values()
@@ -71,33 +72,81 @@ class AcademicSubmissionService
         return [];
     }
 
-    private function normalizeRecord(array $record): array
+    private function normalizeStudentRecord(array $student): array
     {
-        $values = $this->flatten($record);
+        $studentValues = $this->flatten($student);
+        $submissions = data_get($student, 'submissions', []);
+
+        if (! is_array($submissions) || ! array_is_list($submissions)) {
+            return [$this->normalizeSubmission($studentValues, [])];
+        }
+
+        return collect($submissions)
+            ->filter(fn ($submission) => is_array($submission))
+            ->map(fn (array $submission) => $this->normalizeSubmission($studentValues, $submission))
+            ->all();
+    }
+
+    private function normalizeSubmission(array $studentValues, array $submission): array
+    {
+        $submissionValues = $this->flatten($submission);
+        $email = $this->valueFor($studentValues, ['email', 'mahasiswa.email', 'student.email']);
+        $verificators = collect(data_get($submission, 'verificators', []))
+            ->filter(fn ($verificator) => is_array($verificator));
+
+        $pembimbing = $this->lecturersByRole($verificators, 'pembimbing');
+        $penguji = $this->lecturersByRole($verificators, 'penguji');
 
         return [
-            'nama_mahasiswa' => $this->valueFor($values, [
+            'nama_mahasiswa' => $this->valueFor($studentValues, [
                 'nama_mahasiswa', 'mahasiswa.nama', 'student.name', 'student_name', 'name',
             ]),
-            'nim_mahasiswa' => $this->valueFor($values, [
+            'nim_mahasiswa' => $this->valueFor($studentValues, [
                 'nim_mahasiswa', 'mahasiswa.nim', 'student.nim', 'nim', 'student_nim',
-            ]),
-            'dosen_pembimbing_1' => $this->valueFor($values, [
-                'dosen_pembimbing_1', 'pembimbing_1', 'pembimbing1', 'pembimbing.0.nama', 'advisor_1', 'supervisor_1',
-            ]),
-            'dosen_pembimbing_2' => $this->valueFor($values, [
-                'dosen_pembimbing_2', 'pembimbing_2', 'pembimbing2', 'pembimbing.1.nama', 'advisor_2', 'supervisor_2',
-            ]),
-            'dosen_penguji_1' => $this->valueFor($values, [
-                'dosen_penguji_1', 'penguji_1', 'penguji1', 'penguji.0.nama', 'examiner_1',
-            ]),
-            'dosen_penguji_2' => $this->valueFor($values, [
-                'dosen_penguji_2', 'penguji_2', 'penguji2', 'penguji.1.nama', 'examiner_2',
-            ]),
-            'jenis_kegiatan' => $this->mapActivity($this->valueFor($values, [
+            ]) ?? $this->nimFromEmail($email),
+            'dosen_pembimbing_1' => $pembimbing[0] ?? null,
+            'dosen_pembimbing_2' => $pembimbing[1] ?? null,
+            'dosen_penguji_1' => $penguji[0] ?? null,
+            'dosen_penguji_2' => $penguji[1] ?? null,
+            'jenis_kegiatan' => $this->mapActivity($this->valueFor($submissionValues, [
                 'jenis_kegiatan', 'jenis_seminar', 'kegiatan', 'activity', 'seminar_type', 'type',
             ])),
         ];
+    }
+
+    private function lecturersByRole($verificators, string $role): array
+    {
+        return $verificators
+            ->filter(function (array $verificator) use ($role) {
+                return Str::lower((string) ($verificator['role_type'] ?? '')) === $role;
+            })
+            ->map(function (array $verificator) {
+                return $verificator['nama_verificator'] ?? null;
+            })
+            ->filter(fn ($name) => filled($name))
+            ->values()
+            ->take(2)
+            ->all();
+    }
+
+    private function nimFromEmail(?string $email): ?string
+    {
+        if (blank($email)) {
+            return null;
+        }
+
+        $identifier = Str::before($email, '@');
+
+        return preg_match('/^[a-z]\d{6,}$/i', $identifier) ? $identifier : null;
+    }
+
+    private function responseErrorMessage(int $status): string
+    {
+        return match ($status) {
+            401, 403 => 'Akses ke data akademik ditolak. Hubungi administrator.',
+            429 => 'Pencarian data akademik terlalu sering. Tunggu sekitar satu menit, lalu coba lagi.',
+            default => 'Server data akademik sedang bermasalah. Silakan coba lagi beberapa saat.',
+        };
     }
 
     private function flatten(array $values, string $prefix = ''): array
