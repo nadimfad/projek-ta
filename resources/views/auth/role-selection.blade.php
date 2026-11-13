@@ -17,7 +17,7 @@
 
             <div class="mt-5 text-center">
                 <h1 id="role-selection-title" class="text-2xl font-bold text-slate-800">Pilih Cara Masuk</h1>
-                <p class="mt-2 text-sm leading-6 text-slate-500">Akun Anda memiliki akses sebagai dosen dan kajur. Pilih peran untuk sesi ini.</p>
+                <p class="mt-2 text-sm leading-6 text-slate-500">Akun Anda memiliki akses sebagai dosen dan Ketua Jurusan. Pilih peran untuk sesi ini.</p>
             </div>
 
             <form method="POST" action="{{ route('login.role-selection.store') }}" class="mt-7 grid gap-3">
@@ -42,7 +42,7 @@
                         </svg>
                     </span>
                     <span>
-                        <span class="block font-bold text-slate-800">Masuk sebagai Kajur</span>
+                        <span class="block font-bold text-slate-800">Masuk sebagai Ketua Jurusan</span>
                         <span class="mt-1 block text-sm text-slate-500">Pantau dashboard, laporan, dan statistik.</span>
                     </span>
                 </button>

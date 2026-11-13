@@ -34,6 +34,8 @@ return [
     'academic_submission' => [
         'url' => env('ACADEMIC_SUBMISSION_API_URL'),
         'key' => env('ACADEMIC_SUBMISSION_API_KEY'),
+        'start_time' => env('ACADEMIC_SUBMISSION_API_START_TIME'),
+        'end_time' => env('ACADEMIC_SUBMISSION_API_END_TIME'),
     ],
 
 ];

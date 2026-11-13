@@ -12,6 +12,8 @@ class AcademicSubmissionService
     {
         $url = config('services.academic_submission.url');
         $apiKey = config('services.academic_submission.key');
+        $startTime = config('services.academic_submission.start_time');
+        $endTime = config('services.academic_submission.end_time');
 
         if (blank($url) || blank($apiKey)) {
             throw new \RuntimeException('Koneksi data akademik belum dikonfigurasi. Hubungi administrator.');
@@ -23,8 +25,8 @@ class AcademicSubmissionService
                 ->timeout(12)
                 ->retry(1, 250, throw: false)
                 ->get($url, [
-                    'start_time' => '',
-                    'end_time' => '',
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
                     'name' => $name,
                 ]);
         } catch (ConnectionException) {
